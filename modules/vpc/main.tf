@@ -26,6 +26,9 @@ locals {
 resource "aws_vpc" "this" {
   cidr_block = var.cidr
   tags = merge(local.common_tags, {Name = "${var.project}-${var.env}"})
+
+  enable_dns_support = true
+  enable_dns_hostnames = true
 }
 
 resource "aws_subnet" "public" {
@@ -52,6 +55,10 @@ resource "aws_subnet" "private" {
 resource "aws_internet_gateway" "this" {
   vpc_id = aws_vpc.this.id
   tags = merge(local.common_tags, {Name = "${var.project}-${var.env}"})
+}
+
+resource "aws_egress_only_internet_gateway" "this" {
+  vpc_id = aws_vpc.this.id
 }
 
 # Create elastic ip's for the nat gateways
@@ -84,6 +91,11 @@ resource "aws_route_table" "public" {
     gateway_id = aws_internet_gateway.this.id
   }
 
+  route {
+    ipv6_cidr_block = "::/0"
+    gateway_id = aws_internet_gateway.this.id
+  }
+
   tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-public"})
 }
 
@@ -107,6 +119,11 @@ resource "aws_route_table" "private" {
     nat_gateway_id = aws_nat_gateway.this[each.key].id
   }
 
+  route {
+    ipv6_cidr_block = "::/0"
+    egress_only_gateway_id = aws_egress_only_internet_gateway.this.id
+  }
+
   tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-private-${index(var.azs, each.key)}"})
 }
 
@@ -118,12 +135,34 @@ resource "aws_route_table_association" "private" {
   route_table_id = aws_route_table.private[each.value.availability_zone].id
 }
 
-# acl for the public subents allows incoming connections to tcp ports 80 and 443
-# all outgoing requests are allowed
+resource "aws_default_security_group" "this" {
+  vpc_id = aws_vpc.this.id
+
+  ingress {
+    protocol  = -1
+    self      = true
+    from_port = 0
+    to_port   = 0
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = merge(local.common_tags, {Name = "${var.project}-${var.env}"})
+
+}
+
+# based on https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-best-practices.html#nacl-rules-scenario-2
 resource "aws_network_acl" "public" {
   vpc_id = aws_vpc.this.id
   subnet_ids = values(aws_subnet.public)[*].id
 
+  # --- ingress ---
   ingress {
     protocol   = "tcp"
     rule_no    = 100
@@ -135,7 +174,35 @@ resource "aws_network_acl" "public" {
 
   ingress {
     protocol   = "tcp"
-    rule_no    = 200
+    rule_no    = 110
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 443
+    to_port    = 443
+  }
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 120
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 1024
+    to_port    = 65535
+  }
+
+  # --- egress ---
+  egress {
+    protocol   = "tcp"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 80
+    to_port    = 80
+  }
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 110
     action     = "allow"
     cidr_block = "0.0.0.0/0"
     from_port  = 443
@@ -144,28 +211,75 @@ resource "aws_network_acl" "public" {
 
   egress {
     protocol   = -1
-    rule_no    = 100
+    rule_no    = 120
     action     = "allow"
-    cidr_block = "0.0.0.0/0"
+    cidr_block = var.cidr
     from_port  = 0
     to_port    = 0
+  }
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 130
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 1024
+    to_port    = 65535
   }
 
   tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-public"})
 }
 
-# for the private subnets all outgoing requests are allowed
+# based on https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-best-practices.html#nacl-rules-scenario-2
 resource "aws_network_acl" "private" {
   vpc_id = aws_vpc.this.id
   subnet_ids = values(aws_subnet.private)[*].id
 
+  # --- ingress ---
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = var.cidr
+    from_port  = 0
+    to_port    = 0
+  }
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 110
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 1024
+    to_port    = 65535
+  }
+
+  # --- egress ---
   egress {
-    protocol   = -1
+    protocol   = "tcp"
     rule_no    = 100
     action     = "allow"
     cidr_block = "0.0.0.0/0"
-    from_port  = 0
-    to_port    = 0
+    from_port  = 80
+    to_port    = 80
+  }
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 110
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 443
+    to_port    = 443
+  }
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 120
+    action     = "allow"
+    cidr_block = var.cidr
+    from_port  = 1024
+    to_port    = 65535
   }
 
   tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-private"})
