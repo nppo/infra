@@ -1,0 +1,67 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+      "Action": [
+        "ecs:Describe*",
+        "ecs:List*",
+        "ecs:CreateService",
+        "ecs:DeleteAttributes",
+        "ecs:DeleteService",
+        "ecs:DeleteTaskSet",
+        "ecs:PutAttributes",
+        "ecs:RunTask",
+        "ecs:StartTask",
+        "ecs:StopTask",
+        "ecs:TagResource",
+        "ecs:UntagResource",
+        "ecs:UpdateService",
+        "ecs:UpdateServicePrimaryTaskSet",
+        "ecs:UpdateTaskSet"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:ecs:eu-central-1:*:*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/project": "surfpol"
+        },
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "project"
+          ]
+        },
+        "StringEqualsIfExists": {
+          "aws:RequestTag/project": "surfpol"
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ecs:ListClusters",
+        "ecs:ListServices",
+        "ecs:ListTaskDefinitionFamilies",
+        "ecs:ListTaskDefinitions",
+        "ecs:DescribeTaskDefinition",
+        "ecs:CreateTaskSet",
+        "ecs:DeregisterTaskDefinition",
+        "ecs:RegisterTaskDefinition",
+        "cloudwatch:GetMetricStatistics"
+      ],
+      "Resource": ["*"]
+    },
+    {
+      "Effect": "Deny",
+      "Action": [
+        "ecs:UntagResource"
+      ],
+      "Resource": ["arn:aws:ecs:eu-central-1:*:*"],
+      "Condition": {
+        "StringLike": {
+          "aws:TagKeys": "project"
+        }
+      }
+    }
+  ]
+}

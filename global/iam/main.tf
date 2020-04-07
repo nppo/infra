@@ -67,3 +67,22 @@ resource "aws_iam_group_membership" "this" {
   users = each.value
   group = aws_iam_group.this[each.key].name
 }
+
+# == Policies ==
+
+resource "aws_iam_policy" "developers" {
+  name        = "developers"
+  description = "Policy for developer access"
+  policy = file("${path.module}/developers.json")
+}
+
+resource "aws_iam_group_policy_attachment" "test-attach" {
+  group      = aws_iam_group.this["developers"].name
+  policy_arn = aws_iam_policy.developers.arn
+}
+
+resource "aws_iam_group_policy_attachment" "developers-change-password" {
+  group      = aws_iam_group.this["developers"].name
+  policy_arn = "arn:aws:iam::aws:policy/IAMUserChangePassword"
+}
+
