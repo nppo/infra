@@ -39,6 +39,16 @@
     {
       "Effect": "Allow",
       "Action": [
+        "application-autoscaling:Describe*",
+        "application-autoscaling:PutScalingPolicy",
+        "application-autoscaling:RegisterScalableTarget",
+
+        "cloudwatch:DescribeAlarms",
+        "cloudwatch:GetMetricStatistics",
+        "cloudwatch:PutMetricAlarm",
+
+        "elasticloadbalancing:Describe*",
+
         "ecs:ListClusters",
         "ecs:ListServices",
         "ecs:ListTaskDefinitionFamilies",
@@ -47,7 +57,14 @@
         "ecs:CreateTaskSet",
         "ecs:DeregisterTaskDefinition",
         "ecs:RegisterTaskDefinition",
-        "cloudwatch:GetMetricStatistics"
+
+        "iam:ListRoles",
+        "iam:ListAttachedRolePolicies",
+        "iam:ListGroups",
+        "iam:ListUsers",
+        "iam:GetPolicy",
+        "iam:GetPolicyVersion",
+        "iam:GetRole"
       ],
       "Resource": ["*"]
     },
