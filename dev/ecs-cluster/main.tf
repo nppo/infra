@@ -5,7 +5,7 @@ terraform {
 }
 
 provider "aws" {
-  profile    = "surf"
+  profile    = "surf-root"
   region     = "eu-central-1"
 }
 
@@ -14,4 +14,9 @@ module "ecs-cluster" {
 
   project = "surfpol"
   env = "dev"
+}
+
+output "policy_arn" {
+  value = module.ecs-cluster.policy_arn
+  description = "The Policy arn for managing this cluster"
 }

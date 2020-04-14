@@ -41,3 +41,15 @@ resource "aws_ecs_cluster" "this" {
   tags = local.common_tags
 }
 
+data "template_file" "this" {
+  template = file("${path.module}/policy.json.tpl")
+  vars = {
+    cluster_arn = aws_ecs_cluster.this.arn
+  }
+}
+
+resource "aws_iam_policy" "this" {
+  name        = "${var.project}-${var.env}-ecs-manage"
+  description = "Policy for managing the ${var.project}-${var.env} ECS cluster"
+  policy = data.template_file.this.rendered
+}

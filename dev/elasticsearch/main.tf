@@ -5,7 +5,7 @@ terraform {
 }
 
 provider "aws" {
-  profile    = "surf"
+  profile    = "surf-root"
   region     = "eu-central-1"
 }
 

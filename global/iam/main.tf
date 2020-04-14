@@ -5,7 +5,7 @@ terraform {
 }
 
 provider "aws" {
-  profile    = "surf"
+  profile    = "surf-root"
   region     = "eu-central-1"
 }
 
@@ -19,6 +19,16 @@ locals {
   # mapping of users to groups
   users = {"jelmer" = ["developers"]
            "fako" = ["developers"]}
+}
+
+data "terraform_remote_state" "dev_ecs" {
+  backend = "s3"
+
+  config = {
+    bucket = "edu-state"
+    key    = "dev/ecs-cluster/terraform.tfstate"
+    region = "eu-central-1"
+  }
 }
 
 # == Account alias ==
@@ -70,19 +80,20 @@ resource "aws_iam_group_membership" "this" {
 
 # == Policies ==
 
-resource "aws_iam_policy" "developers" {
-  name        = "developers"
-  description = "Policy for developer access"
-  policy = file("${path.module}/developers.json")
+resource "aws_iam_policy" "base" {
+  name        = "base"
+  description = "Base policy for developer access"
+  policy = file("${path.module}/base.json")
 }
 
-resource "aws_iam_group_policy_attachment" "test-attach" {
+# == Policy attachments ==
+
+resource "aws_iam_group_policy_attachment" "base_attach" {
   group      = aws_iam_group.this["developers"].name
-  policy_arn = aws_iam_policy.developers.arn
+  policy_arn = aws_iam_policy.base.arn
 }
 
-resource "aws_iam_group_policy_attachment" "developers-change-password" {
+resource "aws_iam_group_policy_attachment" "ecs_dev_attach" {
   group      = aws_iam_group.this["developers"].name
-  policy_arn = "arn:aws:iam::aws:policy/IAMUserChangePassword"
+  policy_arn = data.terraform_remote_state.dev_ecs.outputs.policy_arn
 }
-

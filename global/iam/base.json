@@ -1,0 +1,27 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+      "Action": [
+        "iam:ListRoles",
+        "iam:ListAttachedRolePolicies",
+        "iam:ListGroups",
+        "iam:ListUsers",
+        "iam:GetPolicy",
+        "iam:GetPolicyVersion",
+        "iam:GetRole",
+        "iam:GetAccountPasswordPolicy"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "iam:ChangePassword"
+      ],
+      "Resource": ["arn:aws:iam::*:user/${aws:username}"]
+    }
+  ]
+}
