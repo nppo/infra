@@ -38,12 +38,17 @@ resource "aws_ecs_cluster" "this" {
     value = "enabled"
   }
 
+  default_capacity_provider_strategy {
+    capacity_provider = "FARGATE"
+  }
+
   tags = local.common_tags
 }
 
 data "template_file" "this" {
   template = file("${path.module}/policy.json.tpl")
   vars = {
+    task_execution_role_arn = aws_iam_role.this.arn
     cluster_arn = aws_ecs_cluster.this.arn
   }
 }

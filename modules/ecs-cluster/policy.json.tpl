@@ -35,7 +35,8 @@
       "Effect": "Allow",
       "Action": [
         "ecs:ListTasks",
-        "ecs:ListServices"
+        "ecs:ListServices",
+        "ecs:DescribeContainerInstances"
       ],
       "Resource": ["*"],
       "Condition": {
@@ -47,7 +48,8 @@
     {
       "Effect": "Allow",
       "Action": [
-        "ecs:DescribeClusters"
+        "ecs:DescribeClusters",
+        "ecs:ListContainerInstances"
       ],
       "Resource": ["${cluster_arn}"]
     },
@@ -59,9 +61,30 @@
         "ecs:ListClusters",
         "ecs:ListTaskDefinitionFamilies",
         "ecs:ListTaskDefinitions",
-        "ecs:RegisterTaskDefinition"
+        "ecs:RegisterTaskDefinition",
+        "ecs:ListTagsForResource",
+        "ecs:DescribeCapacityProviders"
       ],
       "Resource": ["*"]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ecs:TagResource",
+        "ecs:UntagResource"
+      ],
+      "Resource": [
+                    "arn:aws:ecs:*:*:service/*",
+                    "arn:aws:ecs:*:*:task/*",
+                    "arn:aws:ecs:*:*:task-definition/*"
+                  ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "iam:PassRole"
+      ],
+      "Resource": ["${task_execution_role_arn}"]
     }
   ]
 }

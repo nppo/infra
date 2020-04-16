@@ -31,6 +31,16 @@ data "terraform_remote_state" "dev_ecs" {
   }
 }
 
+data "terraform_remote_state" "dev_logs" {
+  backend = "s3"
+
+  config = {
+    bucket = "edu-state"
+    key    = "dev/log-group/terraform.tfstate"
+    region = "eu-central-1"
+  }
+}
+
 # == Account alias ==
 resource "aws_iam_account_alias" "this" {
   account_alias = "surf-edu"
@@ -96,4 +106,9 @@ resource "aws_iam_group_policy_attachment" "base_attach" {
 resource "aws_iam_group_policy_attachment" "ecs_dev_attach" {
   group      = aws_iam_group.this["developers"].name
   policy_arn = data.terraform_remote_state.dev_ecs.outputs.policy_arn
+}
+
+resource "aws_iam_group_policy_attachment" "log_dev_attach" {
+  group      = aws_iam_group.this["developers"].name
+  policy_arn = data.terraform_remote_state.dev_logs.outputs.policy_arn
 }

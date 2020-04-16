@@ -1,9 +1,3 @@
-variable "name" {
-  description = "The name of this log group. Will be appended to project and env."
-  type        = string
-  default     = ""
-}
-
 variable "project" {
   description = "Project to be used on all the resources as identifier"
   type        = string
