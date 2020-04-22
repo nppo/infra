@@ -40,6 +40,7 @@ resource "aws_ecs_cluster" "this" {
 
   default_capacity_provider_strategy {
     capacity_provider = "FARGATE"
+    weight = 1
   }
 
   tags = local.common_tags
