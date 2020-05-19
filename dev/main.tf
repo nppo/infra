@@ -1,3 +1,8 @@
+locals {
+  project = "surfpol"
+  env = "dev"
+}
+
 terraform {
   backend "s3" {
     key = "dev/terraform.tfstate"
@@ -15,8 +20,8 @@ provider "aws" {
 module "vpc" {
   source = "../modules/vpc"
 
-  project = "surfpol"
-  env = "dev"
+  project = local.project
+  env = local.env
   cidr = "10.0.0.0/16"
 
   azs = ["eu-central-1a", "eu-central-1b", "eu-central-1c"]
@@ -24,12 +29,12 @@ module "vpc" {
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
 }
 
-output "vpc_id" {
-  value = module.vpc.vpc_id
-  description = "The id for this VPC"
-}
+module "bastion" {
+  source = "../modules/bastion"
 
-output "private_subnet_ids" {
-  value =  module.vpc.private_subnet_ids
-  description = "The subnet ids for the private subnets"
+  project = local.project
+  env = local.env
+
+  vpc_id = module.vpc.vpc_id
+  subnet_id = module.vpc.private_subnet_ids[0]
 }

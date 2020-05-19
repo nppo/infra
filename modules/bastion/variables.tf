@@ -15,3 +15,9 @@ variable "subnet_id" {
   type        = string
   default     = ""
 }
+
+variable "vpc_id" {
+  description = "VPC id to place the bastion into"
+  type        = string
+  default     = ""
+}
