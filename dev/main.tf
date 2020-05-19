@@ -38,3 +38,14 @@ module "bastion" {
   vpc_id = module.vpc.vpc_id
   subnet_id = module.vpc.private_subnet_ids[0]
 }
+
+module "rds" {
+  source = "../modules/rds"
+
+  db_name = "edushare"
+  project = local.project
+  env = local.env
+
+  vpc_id = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnet_ids
+}
