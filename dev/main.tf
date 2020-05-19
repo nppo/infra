@@ -1,6 +1,9 @@
 terraform {
   backend "s3" {
-    key = "dev/vpc/terraform.tfstate"
+    key = "dev/terraform.tfstate"
+    region = "eu-central-1"
+    bucket = "edu-state"
+    profile = "surf-root"
   }
 }
 
@@ -10,7 +13,7 @@ provider "aws" {
 }
 
 module "vpc" {
-  source = "../../modules/vpc"
+  source = "../modules/vpc"
 
   project = "surfpol"
   env = "dev"

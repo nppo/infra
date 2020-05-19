@@ -145,6 +145,16 @@ resource "aws_default_security_group" "this" {
     to_port   = 0
   }
 
+  ingress {
+    description = "Opens unencrypted traffic to balancer"
+    protocol  = "tcp"
+    self      = false
+    cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+    from_port = 80
+    to_port   = 80
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -188,6 +198,15 @@ resource "aws_network_acl" "public" {
     cidr_block = "0.0.0.0/0"
     from_port  = 1024
     to_port    = 65535
+  }
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 130
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 22
+    to_port    = 22
   }
 
   # --- egress ---
