@@ -49,3 +49,10 @@ module "rds" {
   vpc_id = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnet_ids
 }
+
+module "ecs-cluster" {
+  source = "../modules/ecs-cluster"
+
+  project = local.project
+  env = local.env
+}
