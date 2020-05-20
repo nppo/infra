@@ -1,6 +1,8 @@
 locals {
   project = "surfpol"
   env = "dev"
+  eduvpn_ips = ["145.90.230.0/23", "145.101.60.0/23", "2001:610:450:50::/60", "2001:610:3:2150::/60"]
+  domain_name = "dev.surfedushare.nl"
 }
 
 terraform {
@@ -55,4 +57,17 @@ module "ecs-cluster" {
 
   project = local.project
   env = local.env
+}
+
+module "load-balancer" {
+  source = "../modules/load-balancer"
+
+  project = local.project
+  env = local.env
+
+  vpc_id = module.vpc.vpc_id
+  subnet_ids = module.vpc.public_subnet_ids
+  eduvpn_ips = local.eduvpn_ips
+  domain_name = local.domain_name
+  default_security_group_id = module.vpc.default_security_group_id
 }

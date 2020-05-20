@@ -145,16 +145,6 @@ resource "aws_default_security_group" "this" {
     to_port   = 0
   }
 
-  ingress {
-    description = "Opens unencrypted traffic to balancer"
-    protocol  = "tcp"
-    self      = false
-    cidr_blocks = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-    from_port = 80
-    to_port   = 80
-  }
-
   egress {
     from_port   = 0
     to_port     = 0
