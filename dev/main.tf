@@ -71,3 +71,11 @@ module "load-balancer" {
   domain_name = local.domain_name
   default_security_group_id = module.vpc.default_security_group_id
 }
+
+module "log_group" {
+  source = "../modules/log-group"
+
+  project = local.project
+  env = local.env
+  retention_in_days = 14
+}
