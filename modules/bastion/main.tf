@@ -86,11 +86,6 @@ resource "aws_instance" "this" {
   subnet_id = var.subnet_id
   vpc_security_group_ids = ["${aws_security_group.eduvpn_ssh.id}"]
 
-  #user_data = <<-EOF
-  #            #!/bin/bash
-  #            sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
-  #            EOF
-
   iam_instance_profile = aws_iam_instance_profile.this.name
 
   tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-bastion"})
