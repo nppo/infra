@@ -85,3 +85,10 @@ module "log_group" {
   env = local.env
   retention_in_days = 14
 }
+
+module "image-upload-bucket" {
+  source = "../modules/image-upload-bucket"
+
+  name = "search-portal-media-uploads"
+  project = local.project
+}
