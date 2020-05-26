@@ -11,7 +11,7 @@ data "aws_ami" "this" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-????????"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-20200323"]
   }
 
   filter {
@@ -51,12 +51,40 @@ resource "aws_iam_instance_profile" "this" {
   role = aws_iam_role.this.name
 }
 
+resource "aws_security_group" "eduvpn_ssh" {
+  name = "eduvpn-ssh"
+  description = "Allows SSH access to EduVPN ranges"
+  vpc_id = var.vpc_id
+
+  ingress {
+    protocol = "tcp"
+    from_port = 22
+    to_port = 22
+    cidr_blocks = var.ipv4_eduvpn_ips
+  }
+
+  ingress {
+    protocol = "tcp"
+    from_port = 22
+    to_port = 22
+    ipv6_cidr_blocks = var.ipv6_eduvpn_ips
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_instance" "this" {
   ami           = data.aws_ami.this.id
   instance_type = "t2.micro"
 
   monitoring = true
   subnet_id = var.subnet_id
+  vpc_security_group_ids = ["${aws_security_group.eduvpn_ssh.id}"]
 
   #user_data = <<-EOF
   #            #!/bin/bash

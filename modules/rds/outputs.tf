@@ -3,7 +3,6 @@ output "security_group_access_id" {
   description = "The id of the security group that gives access to this database"
 }
 
-output "password" {
-  value = random_password.password.result
-  description = "Password of the main user of the database"
+output "postgres_password" {
+  value = jsondecode(data.aws_secretsmanager_secret_version.postgres_credentials.secret_string)["password"]
 }

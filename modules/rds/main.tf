@@ -25,11 +25,6 @@ resource "aws_db_parameter_group" "this" {
   tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-${var.db_name}"})
 }
 
-resource "random_password" "password" {
-  length = 16
-  special = true
-}
-
 resource "aws_security_group" "access" {
   name        = "${var.project}-${var.env}-${var.db_name}-access"
   description = "Allows access to the ${var.project}-${var.env}-${var.db_name} database"
@@ -44,7 +39,6 @@ resource "aws_security_group" "db" {
   vpc_id      = var.vpc_id
 
   ingress {
-    description = "TLS from VPC"
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
@@ -59,6 +53,15 @@ resource "aws_security_group" "db" {
   }
 
   tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-${var.db_name}-db"})
+}
+
+resource "aws_secretsmanager_secret" "rds_credentials" {
+  name = "${var.env}/search-portal/postgres"
+  description = "All credentials for the RDS Postgres instance"
+}
+
+data "aws_secretsmanager_secret_version" "postgres_credentials" {
+  secret_id = "${aws_secretsmanager_secret.rds_credentials.id}"
 }
 
 resource "aws_db_instance" "this" {
@@ -79,7 +82,7 @@ resource "aws_db_instance" "this" {
   parameter_group_name     = aws_db_parameter_group.this.name
 
   username                 = "postgres"
-  password                 = random_password.password.result
+  password                 = jsondecode(data.aws_secretsmanager_secret_version.postgres_credentials.secret_string)["password"]
 
   final_snapshot_identifier = "${var.project}-${var.env}-${var.db_name}-final"
   backup_retention_period  = 35
