@@ -32,3 +32,15 @@ variable "private_subnets" {
   type        = list(string)
   default     = []
 }
+
+variable "ipv4_eduvpn_ips" {
+  description = "A list of ipv4 eduvpn ips"
+  type        = list(string)
+  default     = []
+}
+
+variable "ipv6_eduvpn_ips" {
+  description = "A list of ipv6 eduvpn ips"
+  type        = list(string)
+  default     = []
+}

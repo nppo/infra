@@ -1,7 +1,9 @@
 locals {
   project = "surfpol"
   env = "dev"
-  eduvpn_ips = ["145.90.230.0/23", "145.101.60.0/23", "2001:610:450:50::/60", "2001:610:3:2150::/60"]
+  ipv4_eduvpn_ips = ["145.90.230.0/23", "145.101.60.0/23"]
+  ipv6_eduvpn_ips = ["2001:610:450:50::/60", "2001:610:3:2150::/60"]
+  eduvpn_ips = concat(local.ipv4_eduvpn_ips, local.ipv6_eduvpn_ips)
   domain_name = "dev.surfedushare.nl"
 }
 
@@ -29,6 +31,8 @@ module "vpc" {
   azs = ["eu-central-1a", "eu-central-1b", "eu-central-1c"]
   public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
+  ipv4_eduvpn_ips = local.ipv4_eduvpn_ips
+  ipv6_eduvpn_ips = local.ipv6_eduvpn_ips
 }
 
 module "bastion" {
@@ -39,6 +43,8 @@ module "bastion" {
 
   vpc_id = module.vpc.vpc_id
   subnet_id = module.vpc.private_subnet_ids[0]
+  ipv4_eduvpn_ips = local.ipv4_eduvpn_ips
+  ipv6_eduvpn_ips = local.ipv6_eduvpn_ips
 }
 
 module "rds" {

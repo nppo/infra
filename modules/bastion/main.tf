@@ -60,7 +60,14 @@ resource "aws_security_group" "eduvpn_ssh" {
     protocol = "tcp"
     from_port = 22
     to_port = 22
-    cidr_blocks = ["194.171.28.0/27", "194.171.16.0/27", "195.169.127.0/24", "195.169.126.0/23", "145.90.230.0/23", "145.101.60.0/23"]
+    cidr_blocks = var.ipv4_eduvpn_ips
+  }
+
+  ingress {
+    protocol = "tcp"
+    from_port = 22
+    to_port = 22
+    ipv6_cidr_blocks = var.ipv6_eduvpn_ips
   }
 
   egress {
