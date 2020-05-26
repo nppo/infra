@@ -315,3 +315,23 @@ resource "aws_network_acl" "private" {
 
   tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-private"})
 }
+
+resource "aws_key_pair" "jelmer" {
+  key_name = "jelmer"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDL+pYSi8xWN6YdSlNPmBR+Iu5XfRSufXmqrNMesQprU0fSNHE0PiLGv//4a7ZVh6uGCzmqbhQVHbAs50hbODe+Wd5LkNHPnAdu/7gT+Bx3IOwqrZgNyFYxzMRxzKeuxhIwZQjMQNfA79qY+kc/RUX+zaph9fDABbcC5IVDJtpSyPRfx0J3duEbk0opBKLHSV+5gXhyiA39zE7Gxe898AjsKPKClQAUclHYgSK/+U7XrUUMCBJXW/uPVsuO2o0QU9mGxdM0eYf12dP72izYz0wkde5vmVgOpa8UittIUjgrl6+Id2uAvvjIynV46tTOvp8FLe0v0sCsg2ao9tVejxdvYpctg636CtoHsRYbESUDaHrmP5L3NG2UM9J2UIw1e+wpbGGuxvDBTCQK+Pmj6Kn7vTpFfhB3g8+uyWCilVHvtQ0uQ+jjvErODb9GTV9Ozt7LZU1WXtGqC/ODqwg8Y+H5lMCHR4P/yUnP76m3w6Td1h3W+JddZBTGKPkVqtuwbwAxuXC7AH1tFUY6LIqXcnWOv5S59T52CTEMUS1pFY4Anlj7PfBHoNFr/p0+CeLswMRf8SCb+I6G9Cb3ch2BHtKv8aivxuFMmUhjmSrvdda12v5KULwQ+YogXJeahFaoGulc/e81nCPhC0sFFMsggenKCALcENUcDnyx0Lvt9w7myw== Jelmer'siPhone"
+}
+
+resource "aws_key_pair" "fako" {
+  key_name = "fako"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDSoemGsbpE//hs2yYquV79aIk/7zKAO1j9RBaLs0fUk6eThhOX1ONRAxyxkaR+rZT8PsSVGbH/m+OXCb1pDc4ddMulhjOV9KYUY7h5EXAPN+f0uxmecNahY5qhgtBZAs56NY9ZU5+rIS70F+3K1Acmbwvck7SMRCgCRPFCdO2Qyc3AyQqDSyUoALoqoJlleH282/FqfbAokbs/7MpaTeuqfOMSFLqCzTDQK3C8QsOirdfSORG5OofekJojq9yiBe7xQkLEaTl5EBEVsyMrK+5n2TAXEUfH6NvVqyv50faJ8LXNO4eq3vjmUybIPrbTA0h6p6PheuA+b5TTPexBFtVH fako@Fakos-MacBook-Pro.local"
+}
+
+resource "aws_key_pair" "ruben" {
+  key_name = "ruben"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCsXnT5E/IXrWD4JIWhyFxuKfeUTzkHjIDdZ/BPErhSw9vWa608aqvtGOZIpqZi/evpHy3WQxxn9z38eZY1LrnOfN6/9It9GTxeWLqVddHpC1d3AlqdA9Jvm02nrqCWgrnnkz0V3shS6TC/DWcPuL+teI79G5cOD4nfGNK7EYUl98iXphuobFuR8MRAzpkBhMWHtPJN49PU0ftYlytaXiKxlDHj5hq9hJAVgBV+CDK77mYDZpJvYJkKqLI1paRMPIowdI2JJCpGPbjhbihZG+tBXAnvUyBJyewcCfgs3RK4sfR1udXQWdOHXbP0mTvQJg+4uzimW3QV6iNh5Ttc6h8n ruben@Rubens-MacBook-Pro.fritz.box"
+}
+
+resource "aws_key_pair" "kirsten" {
+  key_name = "kirsten"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtreudPBChpjxasTP9IVQ5rOKMLsetchATrLTQjwQ1eNC/Io4CdBFuSPSE1y+p5UMc5NWYyv3MZ8yR+PmBNzdKpRvhGzOTVlbq0aprlue3nD5q8MjOD5Tzjtmnwrk5RQ9aaWK2hZ7ienVKZ6sh3re4052OheaeftBsqNeOKF7PYXlvZCsNVmcMiTHPdVLpgxCGIdjYJ2xVeuqEqYv7J57fCycnV47iRKHv6bCYuJTh26IaOacNKwhaf9n2+dBeSxZPq9VJBfxyPRgg0w7hqzIKx5Dp6VkDci7y2hxjPslwMCujPK6FIddMwDN42z0MXrIEfdb2GocfxTdvOO0XUINd kruys@zilverline.com"
+}
