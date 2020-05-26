@@ -6,8 +6,6 @@ locals {
   }
 }
 
-data "aws_region" "current" {}
-data "aws_caller_identity" "current" {}
 data "aws_vpc" "selected" {
   id = var.vpc_id
 }
@@ -28,7 +26,7 @@ resource "aws_cloudwatch_log_resource_policy" "this" {
         "logs:PutLogEventsBatch",
         "logs:CreateLogStream"
       ],
-      "Resource": "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:${var.log_group_name}:*"
+      "Resource": "${var.log_group_arn}"
     }
   ]
 }
@@ -90,7 +88,7 @@ resource "aws_elasticsearch_domain" "this" {
   }
 
   vpc_options {
-    subnet_ids = var.subnet_ids
+    subnet_ids = [var.subnet_id]
     security_group_ids = ["${aws_security_group.this.id}"]
   }
 

@@ -46,14 +46,8 @@ variable "vpc_id" {
   default     = ""
 }
 
-variable "subnet_ids" {
-  description = "List of VPC Subnet IDs for the domain endpoints to be created in."
-  type        = list
-  default     = []
-}
-
-variable "log_group_name" {
-  description = "The name of the log group to write logs to"
+variable "subnet_id" {
+  description = "VPC Subnet ID for the domain endpoints to be created in."
   type        = string
   default     = ""
 }
