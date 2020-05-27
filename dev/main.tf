@@ -12,12 +12,12 @@ terraform {
     key = "dev/terraform.tfstate"
     region = "eu-central-1"
     bucket = "edu-state"
-    profile = "surf-root"
+    profile = "pol-dev"
   }
 }
 
 provider "aws" {
-  profile    = "surf-root"
+  profile    = "pol-dev"
   region     = "eu-central-1"
 }
 

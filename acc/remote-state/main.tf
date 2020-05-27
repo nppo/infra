@@ -1,16 +1,10 @@
-terraform {
-  backend "s3" {
-    key = "global/s3/terraform.tfstate"
-  }
-}
-
 provider "aws" {
-  profile    = "surf-root"
+  profile    = "pol-acc"
   region     = "eu-central-1"
 }
 
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = "edu-state"
+  bucket = "pol-acc-state"
 
   # Prevent accidental deletion of this S3 bucket
   lifecycle {
@@ -30,7 +24,7 @@ resource "aws_s3_bucket" "terraform_state" {
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "example" {
+resource "aws_s3_bucket_public_access_block" "terraform_state" {
   bucket = aws_s3_bucket.terraform_state.id
 
   block_public_acls   = true
