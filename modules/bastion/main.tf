@@ -6,12 +6,12 @@ locals {
   }
 }
 
-data "aws_ami" "this" {
+data "aws_ami" "ubuntu" {
   most_recent = true
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-20200323"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-????????"]
   }
 
   filter {
@@ -78,15 +78,22 @@ resource "aws_security_group" "eduvpn_ssh" {
   }
 }
 
-resource "aws_instance" "this" {
-  ami           = data.aws_ami.this.id
+data "aws_security_group" "db-access" {
+  name = "${var.project}-${var.env}-edushare-access"
+}
+
+resource "aws_instance" "bastion-host" {
+  ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
 
   monitoring = true
   subnet_id = var.subnet_id
-  vpc_security_group_ids = ["${aws_security_group.eduvpn_ssh.id}"]
+  vpc_security_group_ids = ["${aws_security_group.eduvpn_ssh.id}", data.aws_security_group.db-access.id]
+  associate_public_ip_address = true
 
   iam_instance_profile = aws_iam_instance_profile.this.name
+
+  user_data = templatefile("${path.module}/bastion_setup.tpl", { public_keys = var.public_keys})
 
   tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-bastion"})
   volume_tags = local.common_tags

@@ -33,3 +33,9 @@ variable "ipv6_eduvpn_ips" {
   type        = list(string)
   default     = []
 }
+
+variable "public_keys" {
+  description = "Mapping of name to public key"
+  type        = map(string)
+  default     = {}
+}
