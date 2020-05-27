@@ -19,6 +19,10 @@ provider "aws" {
   region     = "eu-central-1"
 }
 
+resource "aws_iam_account_alias" "alias" {
+  account_alias = "surfpol-acc"
+}
+
 module "user-access" {
   source = "../modules/user-access"
 
