@@ -29,10 +29,6 @@ module "user-access" {
            "rhartog@zilverline.com" = ["superusers"]}
 }
 
-output "passwords" {
-  value = module.user-access.passwords
-}
-
 module "vpc" {
   source = "../modules/vpc"
 
