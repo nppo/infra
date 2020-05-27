@@ -92,3 +92,19 @@ module "image-upload-bucket" {
   name = "search-portal-media-uploads"
   project = local.project
 }
+
+module "elasticsearch" {
+  source = "../modules/elasticsearch"
+
+  project = local.project
+  env = local.env
+
+  domain_name = "main"
+  elasticsearch_version = "7.4"
+  instance_type = "t2.medium.elasticsearch"
+  instance_count = 1
+  instance_volume_size = 10
+  vpc_id = module.vpc.vpc_id
+  subnet_id = module.vpc.private_subnet_ids[0]
+  log_group_arn = module.log_group.arn
+}
