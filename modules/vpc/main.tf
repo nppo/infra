@@ -69,6 +69,9 @@ resource "aws_eip" "this" {
   tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-${index(var.azs, each.key)}"})
 
   depends_on = [aws_internet_gateway.this]
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_nat_gateway" "this" {
