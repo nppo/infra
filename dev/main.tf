@@ -21,6 +21,18 @@ provider "aws" {
   region     = "eu-central-1"
 }
 
+module "user-access" {
+  source = "../modules/user-access"
+
+  users = {"fako.berkers@surfnet.nl" = ["superusers"]
+           "kruys@zilverline.com" = ["superusers"]
+           "rhartog@zilverline.com" = ["superusers"]}
+}
+
+output "passwords" {
+  value = module.user-access.passwords
+}
+
 module "vpc" {
   source = "../modules/vpc"
 
