@@ -98,3 +98,10 @@ resource "aws_instance" "bastion-host" {
   tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-bastion"})
   volume_tags = local.common_tags
 }
+
+resource "aws_eip" "bastion" {
+  vpc = true
+  instance = aws_instance.bastion-host.id
+
+  tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-bastion"})
+}
