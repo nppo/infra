@@ -104,4 +104,8 @@ resource "aws_eip" "bastion" {
   instance = aws_instance.bastion-host.id
 
   tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-bastion"})
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
