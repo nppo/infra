@@ -60,8 +60,20 @@ resource "aws_secretsmanager_secret" "rds_credentials" {
   description = "All credentials for the RDS Postgres instance"
 }
 
-data "aws_secretsmanager_secret_version" "postgres_credentials" {
-  secret_id = "${aws_secretsmanager_secret.rds_credentials.id}"
+resource "random_password" "password" {
+  length = 16
+  special = true
+}
+
+resource "aws_secretsmanager_secret_version" "postgres_password" {
+  secret_id     = aws_secretsmanager_secret.rds_credentials.id
+  secret_string = jsonencode({ password = random_password.password.result })
+
+  lifecycle {
+    ignore_changes = [
+      secret_string
+    ]
+  }
 }
 
 resource "aws_db_instance" "this" {
@@ -82,7 +94,7 @@ resource "aws_db_instance" "this" {
   parameter_group_name     = aws_db_parameter_group.this.name
 
   username                 = "postgres"
-  password                 = jsondecode(data.aws_secretsmanager_secret_version.postgres_credentials.secret_string)["password"]
+  password                 = jsondecode(aws_secretsmanager_secret_version.postgres_password.secret_string)["password"]
 
   final_snapshot_identifier = "${var.project}-${var.env}-${var.db_name}-final"
   backup_retention_period  = 35

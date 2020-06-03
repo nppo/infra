@@ -78,17 +78,13 @@ resource "aws_security_group" "eduvpn_ssh" {
   }
 }
 
-data "aws_security_group" "db-access" {
-  name = "${var.project}-${var.env}-edushare-access"
-}
-
 resource "aws_instance" "bastion-host" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
 
   monitoring = true
   subnet_id = var.subnet_id
-  vpc_security_group_ids = ["${aws_security_group.eduvpn_ssh.id}", data.aws_security_group.db-access.id]
+  vpc_security_group_ids = ["${aws_security_group.eduvpn_ssh.id}", var.database_security_group]
   associate_public_ip_address = true
 
   iam_instance_profile = aws_iam_instance_profile.this.name

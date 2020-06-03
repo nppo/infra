@@ -4,5 +4,5 @@ output "security_group_access_id" {
 }
 
 output "postgres_password" {
-  value = jsondecode(data.aws_secretsmanager_secret_version.postgres_credentials.secret_string)["password"]
+  value = jsondecode(aws_secretsmanager_secret_version.postgres_password.secret_string)["password"]
 }
