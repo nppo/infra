@@ -14,6 +14,7 @@ locals {
 }
 
 terraform {
+  required_version = "~> 0.12"
   backend "s3" {
     key = "dev/terraform.tfstate"
     region = "eu-central-1"
@@ -23,6 +24,7 @@ terraform {
 }
 
 provider "aws" {
+  version    = "~> 2.63"
   profile    = "pol-dev"
   region     = "eu-central-1"
 }
