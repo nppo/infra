@@ -38,7 +38,8 @@ resource "aws_iam_service_linked_role" "es" {
 }
 
 resource "aws_security_group" "this" {
-  name        = "${var.project}-${var.env}-${var.domain_name}"
+  name        = "${var.project}-elasticsearch-${var.domain_name}"
+  description = "Allow inbound traffic to elasticsearch cluster from VPC"
   vpc_id      = var.vpc_id
 
   ingress {
@@ -50,10 +51,12 @@ resource "aws_security_group" "this" {
       data.aws_vpc.selected.cidr_block
     ]
   }
+
+  tags = merge(local.common_tags, {Domain = "${var.project}-elasticsearch-${var.domain_name}"})
 }
 
 resource "aws_elasticsearch_domain" "this" {
-  domain_name           = "${var.project}-${var.env}-${var.domain_name}"
+  domain_name           = "${var.project}-${var.domain_name}"
   elasticsearch_version = var.elasticsearch_version
 
   # TODO: add logic to enable this if correct instance type is selected
@@ -119,7 +122,7 @@ resource "aws_elasticsearch_domain" "this" {
     enabled                  = true
   }
 
-  tags = merge(local.common_tags, {Domain = "${var.project}-${var.env}-${var.domain_name}"})
+  tags = merge(local.common_tags, {Domain = "${var.project}-${var.domain_name}"})
 
   depends_on = [aws_iam_service_linked_role.es]
 }

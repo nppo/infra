@@ -39,7 +39,7 @@ resource "aws_subnet" "public" {
   availability_zone = each.value
   map_public_ip_on_launch = true
 
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-public-${index(var.public_subnets, each.key)}"})
+  tags = merge(local.common_tags, {Name = "${var.project}-public-${index(var.public_subnets, each.key)}"})
 }
 
 resource "aws_subnet" "private" {
@@ -49,12 +49,12 @@ resource "aws_subnet" "private" {
   cidr_block = each.key
   availability_zone = each.value
 
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-private-${index(var.private_subnets, each.key)}"})
+  tags = merge(local.common_tags, {Name = "${var.project}-private-${index(var.private_subnets, each.key)}"})
 }
 
 resource "aws_internet_gateway" "this" {
   vpc_id = aws_vpc.this.id
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.env}"})
+  tags = merge(local.common_tags, {Name = "${var.project}"})
 }
 
 resource "aws_egress_only_internet_gateway" "this" {
@@ -66,7 +66,7 @@ resource "aws_eip" "this" {
   for_each = local.azs_to_subnets
 
   vpc = true
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-${index(var.azs, each.key)}"})
+  tags = merge(local.common_tags, {Name = "${var.project}-${index(var.azs, each.key)}"})
 
   depends_on = [aws_internet_gateway.this]
   lifecycle {
@@ -80,7 +80,7 @@ resource "aws_nat_gateway" "this" {
   allocation_id = aws_eip.this[each.key].id
   subnet_id = aws_subnet.public[each.value].id
 
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-${index(var.azs, each.key)}"})
+  tags = merge(local.common_tags, {Name = "${var.project}-${index(var.azs, each.key)}"})
 
   depends_on = [aws_internet_gateway.this]
 }
@@ -99,7 +99,7 @@ resource "aws_route_table" "public" {
     gateway_id = aws_internet_gateway.this.id
   }
 
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-public"})
+  tags = merge(local.common_tags, {Name = "${var.project}-public"})
 }
 
 # associate the public route table to all public subnets
@@ -127,7 +127,7 @@ resource "aws_route_table" "private" {
     egress_only_gateway_id = aws_egress_only_internet_gateway.this.id
   }
 
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-private-${index(var.azs, each.key)}"})
+  tags = merge(local.common_tags, {Name = "${var.project}-private-${index(var.azs, each.key)}"})
 }
 
 # associate each private route table to the correct private subnet
@@ -156,7 +156,7 @@ resource "aws_default_security_group" "this" {
     ipv6_cidr_blocks = ["::/0"]
   }
 
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.env}"})
+  tags = merge(local.common_tags, {Name = "${var.project}-default"})
 
 }
 
@@ -165,7 +165,7 @@ resource "aws_network_acl" "public" {
   vpc_id = aws_vpc.this.id
   subnet_ids = values(aws_subnet.public)[*].id
 
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-public"})
+  tags = merge(local.common_tags, {Name = "${var.project}-public"})
 }
 
 resource "aws_network_acl_rule" "http" {
@@ -271,7 +271,7 @@ resource "aws_network_acl" "private" {
 
   # --- ingress ---
   ingress {
-    protocol   = "tcp"
+    protocol   = "-1"
     rule_no    = 100
     action     = "allow"
     cidr_block = var.cidr
@@ -316,7 +316,7 @@ resource "aws_network_acl" "private" {
     to_port    = 65535
   }
 
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-private"})
+  tags = merge(local.common_tags, {Name = "${var.project}-private"})
 }
 
 resource "aws_key_pair" "keys" {

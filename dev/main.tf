@@ -112,7 +112,7 @@ module "log_group" {
 module "image-upload-bucket" {
   source = "../modules/image-upload-bucket"
 
-  name = "search-portal-media-uploads"
+  name = "search-portal-media-uploads-${local.env}"
   project = local.project
 }
 

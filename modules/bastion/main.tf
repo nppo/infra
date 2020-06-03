@@ -37,7 +37,7 @@ data "aws_iam_policy_document" "this" {
 }
 
 resource "aws_iam_role" "this" {
-  name = "${var.project}-${var.env}-bastion"
+  name = "${var.project}-bastion"
   assume_role_policy = data.aws_iam_policy_document.this.json
 }
 
@@ -47,7 +47,7 @@ resource "aws_iam_role_policy_attachment" "this" {
 }
 
 resource "aws_iam_instance_profile" "this" {
-  name = "${var.project}-${var.env}-bastion"
+  name = "${var.project}-bastion"
   role = aws_iam_role.this.name
 }
 
@@ -91,7 +91,7 @@ resource "aws_instance" "bastion-host" {
 
   user_data = templatefile("${path.module}/bastion_setup.tpl", { public_keys = var.public_keys})
 
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-bastion"})
+  tags = merge(local.common_tags, {Name = "${var.project}-bastion"})
   volume_tags = local.common_tags
 }
 
@@ -99,7 +99,7 @@ resource "aws_eip" "bastion" {
   vpc = true
   instance = aws_instance.bastion-host.id
 
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-bastion"})
+  tags = merge(local.common_tags, {Name = "${var.project}-bastion"})
 
   lifecycle {
     prevent_destroy = true
