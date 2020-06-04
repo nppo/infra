@@ -5,7 +5,7 @@ locals {
   }
 }
 
-resource "aws_s3_bucket" "image-uploads" {
+resource "aws_s3_bucket" "surfpol-image-uploads" {
   bucket = var.name
   acl = "public-read"
 
