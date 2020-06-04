@@ -39,3 +39,9 @@ variable "public_keys" {
   type        = map(string)
   default     = {}
 }
+
+variable "database_security_group" {
+  description = "ID of the database security group"
+  type        = string
+  default     = ""
+}

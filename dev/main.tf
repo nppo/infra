@@ -67,6 +67,7 @@ module "bastion" {
   ipv4_eduvpn_ips = local.ipv4_eduvpn_ips
   ipv6_eduvpn_ips = local.ipv6_eduvpn_ips
   public_keys = local.public_keys
+  database_security_group = module.rds.security_group_access_id
 }
 
 module "rds" {
@@ -111,7 +112,7 @@ module "log_group" {
 module "image-upload-bucket" {
   source = "../modules/image-upload-bucket"
 
-  name = "search-portal-media-uploads"
+  name = "search-portal-media-uploads-${local.env}"
   project = local.project
 }
 

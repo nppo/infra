@@ -29,8 +29,8 @@ resource "aws_iam_role_policy_attachment" "this" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-resource "aws_ecs_cluster" "this" {
-  name = "${var.project}-${var.env}"
+resource "aws_ecs_cluster" "surfpol" {
+  name = var.project
   capacity_providers = ["FARGATE"]
 
   setting {
@@ -46,16 +46,16 @@ resource "aws_ecs_cluster" "this" {
   tags = local.common_tags
 }
 
-data "template_file" "this" {
+data "template_file" "surfpol" {
   template = file("${path.module}/policy.json.tpl")
   vars = {
     task_execution_role_arn = aws_iam_role.this.arn
-    cluster_arn = aws_ecs_cluster.this.arn
+    cluster_arn = aws_ecs_cluster.surfpol.arn
   }
 }
 
-resource "aws_iam_policy" "this" {
-  name        = "${var.project}-${var.env}-ecs-manage"
-  description = "Policy for managing the ${var.project}-${var.env} ECS cluster"
-  policy = data.template_file.this.rendered
+resource "aws_iam_policy" "surfpol-ecs" {
+  name        = "${var.project}-ecs-manage"
+  description = "Policy for managing the ${var.project} ECS cluster"
+  policy = data.template_file.surfpol.rendered
 }

@@ -10,19 +10,7 @@ resource "aws_db_subnet_group" "this" {
   name       = "${var.project}-${var.env}-${var.db_name}"
   subnet_ids = var.subnet_ids
 
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-${var.db_name}"})
-}
-
-resource "aws_db_parameter_group" "this" {
-  name   = "${var.project}-${var.env}-${var.db_name}"
-  family = "postgres11"
-
-  parameter {
-    name  = "timezone"
-    value = "Europe/Amsterdam"
-  }
-
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-${var.db_name}"})
+  tags = merge(local.common_tags, {Name = "${var.project}-${var.db_name}"})
 }
 
 resource "aws_security_group" "access" {
@@ -30,7 +18,7 @@ resource "aws_security_group" "access" {
   description = "Allows access to the ${var.project}-${var.env}-${var.db_name} database"
   vpc_id      = var.vpc_id
 
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-${var.db_name}-access"})
+  tags = merge(local.common_tags, {Name = "${var.project}-${var.db_name}-access"})
 }
 
 resource "aws_security_group" "db" {
@@ -52,20 +40,39 @@ resource "aws_security_group" "db" {
     security_groups = [aws_security_group.access.id]
   }
 
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-${var.db_name}-db"})
+  tags = merge(local.common_tags, {Name = "${var.project}-${var.db_name}-db"})
+}
+
+resource "random_password" "password" {
+  length = 16
+  special = true
+  override_special = "/@"
 }
 
 resource "aws_secretsmanager_secret" "rds_credentials" {
-  name = "${var.env}/search-portal/postgres"
+  name = "search-portal/postgres"
   description = "All credentials for the RDS Postgres instance"
 }
 
-data "aws_secretsmanager_secret_version" "postgres_credentials" {
-  secret_id = "${aws_secretsmanager_secret.rds_credentials.id}"
+resource "aws_secretsmanager_secret_version" "postgres_password" {
+  secret_id     = aws_secretsmanager_secret.rds_credentials.id
+  secret_string = jsonencode({ password = random_password.password.result })
 }
 
-resource "aws_db_instance" "this" {
-  identifier               = "${var.project}-${var.env}-${var.db_name}"
+resource "aws_db_parameter_group" "postgres12" {
+  name   = "${var.project}-${var.db_name}"
+  family = "postgres12"
+
+  parameter {
+    name  = "timezone"
+    value = "Europe/Amsterdam"
+  }
+
+  tags = merge(local.common_tags, {Name = "${var.project}-${var.db_name}"})
+}
+
+resource "aws_db_instance" "surfpol" {
+  identifier               = "${var.project}-${var.db_name}"
   db_subnet_group_name     = aws_db_subnet_group.this.name
   multi_az                 = false
   vpc_security_group_ids   = [aws_security_group.db.id]
@@ -74,17 +81,17 @@ resource "aws_db_instance" "this" {
   max_allocated_storage    = 1000
   storage_type             = "gp2"
   engine                   = "postgres"
-  engine_version           = "11.6"
+  engine_version           = "12.2"
   instance_class           = "db.t2.micro"
   name                     = var.db_name
   #storage_encrypted        = true
 
-  parameter_group_name     = aws_db_parameter_group.this.name
+  parameter_group_name     = aws_db_parameter_group.postgres12.name
 
   username                 = "postgres"
-  password                 = jsondecode(data.aws_secretsmanager_secret_version.postgres_credentials.secret_string)["password"]
+  password                 = jsondecode(aws_secretsmanager_secret_version.postgres_password.secret_string)["password"]
 
-  final_snapshot_identifier = "${var.project}-${var.env}-${var.db_name}-final"
+  final_snapshot_identifier = "${var.project}-${var.db_name}-final"
   backup_retention_period  = 35
   backup_window            = "02:00-03:00"
   delete_automated_backups = true
@@ -97,5 +104,5 @@ resource "aws_db_instance" "this" {
 
   allow_major_version_upgrade = false
 
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-${var.db_name}"})
+  tags = merge(local.common_tags, {Name = "${var.project}-${var.db_name}"})
 }
