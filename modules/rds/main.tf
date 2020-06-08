@@ -107,7 +107,7 @@ resource "aws_db_instance" "surfpol" {
   tags = merge(local.common_tags, {Name = "${var.project}-${var.db_name}"})
 }
 
-resource "random_password_application" "password" {
+resource "random_password" "random_application_password" {
   length = 16
   special = true
   override_special = "/@"
@@ -120,31 +120,5 @@ resource "aws_secretsmanager_secret" "rds_credentials_application" {
 
 resource "aws_secretsmanager_secret_version" "postgres_password_application" {
   secret_id     = aws_secretsmanager_secret.rds_credentials_application.id
-  secret_string = jsonencode({ password = random_password.rds_credentials_application.result })
-}
-
-resource "postgresql_role" "application_role" {
-  name     = "application"
-  login    = true
-  password = jsondecode(aws_secretsmanager_secret_version.postgres_password_application.secret_string)["password"]
-}
-
-resource "postgresql_default_privileges" "application_default_privileges_tables" {
-  role     = "application"
-  database = "${var.project}-${var.db_name}"
-  schema   = "public"
-
-  owner       = "postgres"
-  object_type = "table"
-  privileges  = ["SELECT", "INSERT", "UPDATE", "DELETE"]
-}
-
-resource "postgresql_default_privileges" "application_default_privileges_sequences" {
-  role     = "application"
-  database = "${var.project}-${var.db_name}"
-  schema   = "public"
-
-  owner       = "postgres"
-  object_type = "sequence"
-  privileges  = ["SELECT", "UPDATE", "USAGE"]
+  secret_string = jsonencode({ password = random_password.random_application_password.result })
 }
