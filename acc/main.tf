@@ -81,6 +81,13 @@ module "bastion" {
   database_security_group = module.rds.security_group_access_id
 }
 
+module "ecs-cluster" {
+  source = "../modules/ecs-cluster"
+
+  project = local.project
+  env = local.env
+}
+
 module "load-balancer" {
   source = "../modules/load-balancer"
 
@@ -92,4 +99,11 @@ module "load-balancer" {
   eduvpn_ips = local.eduvpn_ips
   domain_name = local.domain_name
   default_security_group_id = module.vpc.default_security_group_id
+}
+
+module "image-upload-bucket" {
+  source = "../modules/image-upload-bucket"
+
+  name = "search-portal-media-uploads-${local.env}"
+  project = local.project
 }
