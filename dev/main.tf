@@ -86,6 +86,8 @@ module "ecs-cluster" {
 
   project = local.project
   env = local.env
+
+  postgres_credentials_application_arn = module.rds.postgres_credentials_application_arn
 }
 
 module "load-balancer" {

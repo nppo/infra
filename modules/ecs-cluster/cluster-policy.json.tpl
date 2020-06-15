@@ -84,7 +84,10 @@
       "Action": [
         "iam:PassRole"
       ],
-      "Resource": ["${task_execution_role_arn}"]
+      "Resource": [
+        "${task_execution_role_arn}",
+        "${superuser_task_execution_role_arn}"
+      ]
     }
   ]
 }
