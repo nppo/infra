@@ -10,9 +10,9 @@
                 "secretsmanager:ListSecretVersionIds"
             ],
             "Resource": [
-                "arn:aws:secretsmanager:eu-central-1:322480324822:secret:dev/search-portal/django-TPQRKj",
-                "arn:aws:secretsmanager:eu-central-1:322480324822:secret:dev/search-portal/surfconext-YAf8dw",
-                "arn:aws:secretsmanager:eu-central-1:322480324822:secret:dev/search-portal/elastic-ByS7CH",
+                "${django_credentials_arn}",
+                "${surfconext_credentials_arn}",
+                "${elastic_search_credentials_arn}",
                 "${postgres_credentials_application_arn}"
             ]
         },

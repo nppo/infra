@@ -21,6 +21,41 @@ data "aws_iam_policy_document" "task_role_policy" {
 
 
 ###########################################
+# CREATING CLUSTER SECRETS
+###########################################
+
+resource "aws_secretsmanager_secret" "django" {
+  name = "search-portal/django"
+  description = "Mainly the Django SECRET_KEY setting, but possibly in the future other miscellaneous secrets"
+}
+
+resource "aws_secretsmanager_secret_version" "django" {
+  secret_id     = aws_secretsmanager_secret.django.id
+  secret_string = jsonencode({ secret_key = "" })
+}
+
+resource "aws_secretsmanager_secret" "surfconext" {
+  name = "search-portal/surfconext"
+  description = "The OIDC secret key"
+}
+
+resource "aws_secretsmanager_secret_version" "surfconext" {
+  secret_id     = aws_secretsmanager_secret.surfconext.id
+  secret_string = jsonencode({ secret_key = "" })
+}
+
+resource "aws_secretsmanager_secret" "elastic_search" {
+  name = "search-portal/elastic"
+  description = "Password for connecting to Elastic Search service"
+}
+
+resource "aws_secretsmanager_secret_version" "elastic_search" {
+  secret_id     = aws_secretsmanager_secret.elastic_search.id
+  secret_string = jsonencode({ password = "" })
+}
+
+
+###########################################
 # CREATING SUPERUSER TASK ROLE
 ###########################################
 
@@ -57,6 +92,9 @@ resource "aws_iam_role" "application_task_role" {
 data "template_file" "task_secrets_policy" {
   template = file("${path.module}/task-secrets-policy.json.tpl")
   vars = {
+    django_credentials_arn = aws_secretsmanager_secret.django.arn
+    surfconext_credentials_arn = aws_secretsmanager_secret.surfconext.arn
+    elastic_search_credentials_arn = aws_secretsmanager_secret.elastic_search.arn
     postgres_credentials_application_arn = var.postgres_credentials_application_arn
   }
 }
