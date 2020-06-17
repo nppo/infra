@@ -10,8 +10,14 @@ variable "env" {
   default     = ""
 }
 
-variable "postgres_credentials_application_arn" {
-  description = "The ARN for the application postgres credentials"
+variable "application_task_role_arn" {
+  description = "The ARN of the application role"
+  type        = string
+  default     = ""
+}
+
+variable "superuser_task_role_arn" {
+  description = "The ARN of the superuser role"
   type        = string
   default     = ""
 }

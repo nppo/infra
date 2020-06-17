@@ -12,7 +12,6 @@
             "Resource": [
                 "${django_credentials_arn}",
                 "${surfconext_credentials_arn}",
-                "${elastic_search_credentials_arn}",
                 "${postgres_credentials_application_arn}"
             ]
         },
