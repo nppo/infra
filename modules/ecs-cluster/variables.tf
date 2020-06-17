@@ -9,3 +9,15 @@ variable "env" {
   type        = string
   default     = ""
 }
+
+variable "application_task_role_arn" {
+  description = "The ARN of the application role"
+  type        = string
+  default     = ""
+}
+
+variable "superuser_task_role_arn" {
+  description = "The ARN of the superuser role"
+  type        = string
+  default     = ""
+}

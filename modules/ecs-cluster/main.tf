@@ -6,39 +6,6 @@ locals {
   }
 }
 
-data "aws_iam_policy_document" "this" {
-  statement {
-    effect = "Allow"
-    principals {
-      type = "Service"
-      identifiers = [
-        "ecs-tasks.amazonaws.com"
-      ]
-    }
-    actions = ["sts:AssumeRole"]
-  }
-}
-
-resource "aws_iam_role" "this" {
-  name = "ecsTaskExecutionRole"
-  assume_role_policy = data.aws_iam_policy_document.this.json
-}
-
-resource "aws_iam_role_policy_attachment" "secretsmanager" {
-  role = aws_iam_role.this.name
-  policy_arn = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
-}
-
-resource "aws_iam_role_policy_attachment" "s3" {
-  role = aws_iam_role.this.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
-}
-
-resource "aws_iam_role_policy_attachment" "this" {
-  role       = aws_iam_role.this.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-}
-
 resource "aws_ecs_cluster" "surfpol" {
   name = var.project
   capacity_providers = ["FARGATE"]
@@ -57,9 +24,10 @@ resource "aws_ecs_cluster" "surfpol" {
 }
 
 data "template_file" "surfpol" {
-  template = file("${path.module}/policy.json.tpl")
+  template = file("${path.module}/cluster-policy.json.tpl")
   vars = {
-    task_execution_role_arn = aws_iam_role.this.arn
+    task_execution_role_arn = var.application_task_role_arn
+    superuser_task_execution_role_arn = var.superuser_task_role_arn
     cluster_arn = aws_ecs_cluster.surfpol.arn
   }
 }

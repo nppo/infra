@@ -51,7 +51,7 @@ resource "random_password" "password" {
 
 resource "aws_secretsmanager_secret" "rds_credentials" {
   name = "search-portal/postgres"
-  description = "All credentials for the RDS Postgres instance"
+  description = "Root user credentials for the RDS Postgres instance"
 }
 
 resource "aws_secretsmanager_secret_version" "postgres_password" {
@@ -105,4 +105,20 @@ resource "aws_db_instance" "surfpol" {
   allow_major_version_upgrade = false
 
   tags = merge(local.common_tags, {Name = "${var.project}-${var.db_name}"})
+}
+
+resource "random_password" "random_application_password" {
+  length = 16
+  special = true
+  override_special = "/@"
+}
+
+resource "aws_secretsmanager_secret" "rds_credentials_application" {
+  name = "search-portal/postgres-application"
+  description = "Application credentials for the RDS Postgres instance"
+}
+
+resource "aws_secretsmanager_secret_version" "postgres_password_application" {
+  secret_id     = aws_secretsmanager_secret.rds_credentials_application.id
+  secret_string = jsonencode({ password = random_password.random_application_password.result })
 }

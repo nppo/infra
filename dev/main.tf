@@ -86,6 +86,8 @@ module "ecs-cluster" {
 
   project = local.project
   env = local.env
+  application_task_role_arn = module.service.application_task_role_arn
+  superuser_task_role_arn = module.service.superuser_task_role_arn
 }
 
 module "load-balancer" {
@@ -130,4 +132,10 @@ module "elasticsearch" {
   vpc_id = module.vpc.vpc_id
   subnet_id = module.vpc.private_subnet_ids[0]
   log_group_arn = module.log_group.arn
+}
+
+module "service" {
+  source = "../modules/service"
+  postgres_credentials_application_arn = module.rds.postgres_credentials_application_arn
+  elasticsearch_arn = module.elasticsearch.elasticsearch_arn
 }
