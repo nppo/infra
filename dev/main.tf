@@ -137,4 +137,5 @@ module "elasticsearch" {
 module "service" {
   source = "../modules/service"
   postgres_credentials_application_arn = module.rds.postgres_credentials_application_arn
+  elasticsearch_arn = module.elasticsearch.elasticsearch_arn
 }

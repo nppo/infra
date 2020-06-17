@@ -62,6 +62,24 @@ resource "aws_iam_policy" "task_secrets_policy" {
   policy = data.template_file.task_secrets_policy.rendered
 }
 
+resource "aws_iam_policy" "elasticsearch_read_access" {
+  name        = "SurfpolElasticSearchReadAccess"
+  description = "Policy for read-access to surfpol elasticsearch cluster"
+  policy = templatefile(
+    "${path.module}/elasticsearch_read_access.json.tpl",
+    { elasticsearch_arn: var.elasticsearch_arn }
+  )
+}
+
+resource "aws_iam_policy" "elasticsearch_full_access" {
+  name        = "SurfpolElasticSearchFullAccess"
+  description = "Policy for full access to surfpol elasticsearch cluster"
+  policy = templatefile(
+    "${path.module}/elasticsearch_full_access.json.tpl",
+    { elasticsearch_arn: var.elasticsearch_arn }
+  )
+}
+
 resource "aws_iam_role_policy_attachment" "application_secretsmanager" {
   role = aws_iam_role.application_task_role.name
   policy_arn = aws_iam_policy.task_secrets_policy.arn
@@ -75,6 +93,11 @@ resource "aws_iam_role_policy_attachment" "application_s3" {
 resource "aws_iam_role_policy_attachment" "application_task_execution" {
   role       = aws_iam_role.application_task_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "application_elastic" {
+  role = aws_iam_role.application_task_role.name
+  policy_arn = aws_iam_policy.elasticsearch_read_access.arn
 }
 
 resource "aws_iam_role" "superuser_task_role" {
@@ -95,4 +118,9 @@ resource "aws_iam_role_policy_attachment" "superuser_s3" {
 resource "aws_iam_role_policy_attachment" "superuser_task_execution" {
   role       = aws_iam_role.superuser_task_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "superuser_elastic" {
+  role = aws_iam_role.superuser_task_role.name
+  policy_arn = aws_iam_policy.elasticsearch_full_access.arn
 }

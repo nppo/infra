@@ -3,3 +3,9 @@ variable "postgres_credentials_application_arn" {
   type        = string
   default     = ""
 }
+
+variable "elasticsearch_arn" {
+  description = "The ARN of the elasticsearch cluster"
+  type        = string
+  default     = ""
+}
