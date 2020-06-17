@@ -18,6 +18,16 @@ resource "aws_secretsmanager_secret_version" "surfconext" {
   secret_string = jsonencode({ secret_key = "" })
 }
 
+resource "aws_secretsmanager_secret" "elastic_search" {
+  name = "search-portal/elastic"
+  description = "Password for connecting to Elastic Search service"
+}
+
+resource "aws_secretsmanager_secret_version" "elastic_search" {
+  secret_id     = aws_secretsmanager_secret.elastic_search.id
+  secret_string = jsonencode({ password = "" })
+}
+
 data "aws_iam_policy_document" "task_role_policy" {
   statement {
     effect = "Allow"
@@ -41,6 +51,7 @@ data "template_file" "task_secrets_policy" {
   vars = {
     django_credentials_arn = aws_secretsmanager_secret.django.arn
     surfconext_credentials_arn = aws_secretsmanager_secret.surfconext.arn
+    elastic_search_credentials_arn = aws_secretsmanager_secret.elastic_search.arn
     postgres_credentials_application_arn = var.postgres_credentials_application_arn
   }
 }
