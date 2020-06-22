@@ -80,14 +80,18 @@ resource "aws_iam_policy" "elasticsearch_full_access" {
   )
 }
 
+resource "aws_iam_policy" "s3_read_write" {
+  name        = "SurfpolS3ReadWrite"
+  description = "Policy for read/write access to image upload bucket"
+  policy = templatefile(
+    "${path.module}/s3_read_write.json.tpl",
+    { bucket_arn: var.image_upload_bucket_arn }
+  )
+}
+
 resource "aws_iam_role_policy_attachment" "application_secretsmanager" {
   role = aws_iam_role.application_task_role.name
   policy_arn = aws_iam_policy.task_secrets_policy.arn
-}
-
-resource "aws_iam_role_policy_attachment" "application_s3" {
-  role = aws_iam_role.application_task_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
 
 resource "aws_iam_role_policy_attachment" "application_task_execution" {
@@ -98,6 +102,11 @@ resource "aws_iam_role_policy_attachment" "application_task_execution" {
 resource "aws_iam_role_policy_attachment" "application_elastic" {
   role = aws_iam_role.application_task_role.name
   policy_arn = aws_iam_policy.elasticsearch_read_access.arn
+}
+
+resource "aws_iam_role_policy_attachment" "application_s3" {
+  role = aws_iam_role.application_task_role.name
+  policy_arn = aws_iam_policy.s3_read_write.arn
 }
 
 resource "aws_iam_role" "superuser_task_role" {
