@@ -86,6 +86,8 @@ module "ecs-cluster" {
 
   project = local.project
   env = local.env
+  application_task_role_arn = module.service.application_task_role_arn
+  superuser_task_role_arn = module.service.superuser_task_role_arn
 }
 
 module "load-balancer" {
@@ -106,4 +108,34 @@ module "image-upload-bucket" {
 
   name = "search-portal-media-uploads-${local.env}"
   project = local.project
+}
+
+module "log_group" {
+  source = "../modules/log-group"
+
+  project = local.project
+  env = local.env
+  retention_in_days = 14
+}
+
+module "elasticsearch" {
+  source = "../modules/elasticsearch"
+
+  project = local.project
+  env = local.env
+
+  domain_name = "main"
+  elasticsearch_version = "7.4"
+  instance_type = "t2.medium.elasticsearch"
+  instance_count = 1
+  instance_volume_size = 10
+  vpc_id = module.vpc.vpc_id
+  subnet_id = module.vpc.private_subnet_ids[0]
+  log_group_arn = module.log_group.arn
+}
+
+module "service" {
+  source = "../modules/service"
+  postgres_credentials_application_arn = module.rds.postgres_credentials_application_arn
+  elasticsearch_arn = module.elasticsearch.elasticsearch_arn
 }
