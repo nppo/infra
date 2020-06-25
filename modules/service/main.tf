@@ -124,3 +124,56 @@ resource "aws_iam_role_policy_attachment" "superuser_elastic" {
   role = aws_iam_role.superuser_task_role.name
   policy_arn = aws_iam_policy.elasticsearch_full_access.arn
 }
+
+resource "aws_cloudwatch_event_rule" "clearlogins" {
+  name        = "clearlogins"
+  description = "Runs the clearlogins command every day"
+
+  # Every day at 2:00 am UTC
+  schedule_expression = "cron(0 2 * * ? *)"
+}
+
+resource "aws_iam_role" "ecs_events_role" {
+  name = "ecsEventsRole"
+  assume_role_policy = data.aws_iam_policy_document.events.json
+}
+
+data "aws_iam_policy_document" "events" {
+  statement {
+    effect = "Allow"
+    principals {
+      type = "Service"
+      identifiers = [
+        "events.amazonaws.com"
+      ]
+    }
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+resource "aws_iam_policy" "scheduled_event_ecs" {
+  name        = "AmazonEC2ContainerServiceEventsRole"
+  description = "Permission to run ECS tasks"
+  policy = templatefile(
+    "${path.module}/ecs-events-policy.json.tpl", {}
+  )
+}
+
+resource "aws_iam_policy" "event_task_role" {
+  name        = "AmazonECSEventsTaskExecutionRole"
+  description = "Permission to run ECS tasks as application role"
+  policy = templatefile(
+    "${path.module}/ecs-events-task-execution.json.tpl",
+    { task_role_arn: aws_iam_role.application_task_role.arn }
+  )
+}
+
+resource "aws_iam_role_policy_attachment" "scheduled_event_ecs_tasks" {
+  role       = aws_iam_role.ecs_events_role.name
+  policy_arn = aws_iam_policy.scheduled_event_ecs.arn
+}
+
+resource "aws_iam_role_policy_attachment" "scheduled_event_ecs_task_role" {
+  role       = aws_iam_role.ecs_events_role.name
+  policy_arn = aws_iam_policy.event_task_role.arn
+}
