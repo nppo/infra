@@ -9,3 +9,9 @@ variable "elasticsearch_arn" {
   type        = string
   default     = ""
 }
+
+variable "image_upload_bucket_arn" {
+  description = "The ARN of the image upload bucket"
+  type        = string
+  default     = ""
+}
