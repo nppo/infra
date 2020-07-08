@@ -25,7 +25,7 @@ variable "elasticsearch_version" {
 variable "instance_type" {
   description = "The instance type to use"
   type        = string
-  default     = "t2.medium.elasticsearch"
+  default     = "m3.large.elasticsearch"
 }
 
 variable "instance_count" {
