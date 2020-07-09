@@ -126,7 +126,7 @@ module "elasticsearch" {
 
   domain_name = "main"
   elasticsearch_version = "7.4"
-  instance_type = "t2.medium.elasticsearch"
+  instance_type = "m3.xlarge.elasticsearch"
   instance_count = 1
   instance_volume_size = 10
   vpc_id = module.vpc.vpc_id
