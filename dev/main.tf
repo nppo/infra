@@ -135,7 +135,6 @@ module "elasticsearch" {
 module "service" {
   source = "../modules/service"
   postgres_credentials_application_arn = module.rds.postgres_credentials_application_arn
-  elasticsearch_arn = module.elasticsearch.elasticsearch_arn
   elasticsearch_read_access_arn = module.elasticsearch.elasticsearch_read_access_arn
   image_upload_bucket_arn = module.image-upload-bucket.image_bucket_arn
   application_task_role_arn = module.ecs-cluster.application_task_role_arn
