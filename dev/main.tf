@@ -133,6 +133,7 @@ module "elasticsearch" {
   log_group_arn = module.log_group.arn
   superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
   application_task_role_name = module.ecs-cluster.application_task_role_name
+  harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
 }
 
 module "service" {
@@ -142,4 +143,10 @@ module "service" {
   application_task_role_arn = module.ecs-cluster.application_task_role_arn
   application_task_role_name = module.ecs-cluster.application_task_role_name
   django_secrets_arn = module.ecs-cluster.django_secrets_arn
+}
+
+module "harvester" {
+  source = "../modules/harvester"
+  postgres_credentials_application_arn = module.rds.postgres_credentials_application_arn
+  harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
 }

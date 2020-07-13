@@ -69,3 +69,9 @@ variable "application_task_role_name" {
   type        = string
   default     = ""
 }
+
+variable "harvester_task_role_name" {
+  description = "The name of the IAM role that is used by harvester tasks"
+  type        = string
+  default     = ""
+}

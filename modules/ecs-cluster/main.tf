@@ -29,6 +29,16 @@ resource "aws_iam_role_policy_attachment" "application_task_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+resource "aws_iam_role" "harvester_task_role" {
+  name = "ecsHarvesterTaskExecutionRole"
+  assume_role_policy = data.aws_iam_policy_document.task_role_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "harvester_task_execution" {
+  role       = aws_iam_role.application_task_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
 resource "aws_iam_role" "superuser_task_role" {
   name = "ecsSuperuserTaskExecutionRole"
   assume_role_policy = data.aws_iam_policy_document.task_role_policy.json
