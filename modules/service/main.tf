@@ -12,7 +12,7 @@ resource "aws_secretsmanager_secret_version" "django" {
 # From here new style Django secrets per AWS service
 resource "aws_secretsmanager_secret" "django_portal" {
   name = "search-portal/django"
-  description = "Mainly the Django SECRET_KEY setting, but possibly in the future other miscellaneous secrets"
+  description = "Mainly the Django SECRET_KEY setting for portal service, but possibly in the future other miscellaneous secrets"
 }
 
 resource "aws_secretsmanager_secret_version" "django_portal" {
@@ -54,7 +54,7 @@ data "template_file" "task_secrets_policy" {
 
 resource "aws_iam_policy" "task_secrets_policy" {
   name        = "ecsTasksSecretsPolicy"
-  description = "Policy for using secrets by tasks on ECS cluster"
+  description = "Policy for using secrets by search-portal tasks"
   policy = data.template_file.task_secrets_policy.rendered
 }
 
