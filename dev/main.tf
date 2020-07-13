@@ -68,6 +68,7 @@ module "bastion" {
   ipv6_eduvpn_ips = local.ipv6_eduvpn_ips
   public_keys = local.public_keys
   database_security_group = module.rds.security_group_access_id
+  default_security_group_id = module.vpc.default_security_group_id
 }
 
 module "rds" {

@@ -45,3 +45,9 @@ variable "database_security_group" {
   type        = string
   default     = ""
 }
+
+variable "default_security_group_id" {
+  description = "The ID of the default security group"
+  type = string
+  default = ""
+}

@@ -84,7 +84,7 @@ resource "aws_instance" "bastion-host" {
 
   monitoring = true
   subnet_id = var.subnet_id
-  vpc_security_group_ids = ["${aws_security_group.eduvpn_ssh.id}", var.database_security_group]
+  vpc_security_group_ids = ["${aws_security_group.eduvpn_ssh.id}", var.database_security_group, var.default_security_group_id]
   associate_public_ip_address = true
 
   iam_instance_profile = aws_iam_instance_profile.this.name
