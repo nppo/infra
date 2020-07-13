@@ -4,12 +4,6 @@ variable "postgres_credentials_application_arn" {
   default     = ""
 }
 
-variable "elasticsearch_read_access_arn" {
-  description = "The ARN of the elastic search read only role"
-  type        = string
-  default     = ""
-}
-
 variable "image_upload_bucket_arn" {
   description = "The ARN of the image upload bucket"
   type        = string

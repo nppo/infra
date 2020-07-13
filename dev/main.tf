@@ -130,12 +130,13 @@ module "elasticsearch" {
   vpc_id = module.vpc.vpc_id
   subnet_id = module.vpc.private_subnet_ids[0]
   log_group_arn = module.log_group.arn
+  superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
+  application_task_role_name = module.ecs-cluster.application_task_role_name
 }
 
 module "service" {
   source = "../modules/service"
   postgres_credentials_application_arn = module.rds.postgres_credentials_application_arn
-  elasticsearch_read_access_arn = module.elasticsearch.elasticsearch_read_access_arn
   image_upload_bucket_arn = module.image-upload-bucket.image_bucket_arn
   application_task_role_arn = module.ecs-cluster.application_task_role_arn
   application_task_role_name = module.ecs-cluster.application_task_role_name

@@ -72,11 +72,6 @@ resource "aws_iam_role_policy_attachment" "application_secretsmanager" {
   policy_arn = aws_iam_policy.task_secrets_policy.arn
 }
 
-resource "aws_iam_role_policy_attachment" "application_elastic" {
-  role = var.application_task_role_name
-  policy_arn = var.elasticsearch_read_access_arn
-}
-
 resource "aws_iam_role_policy_attachment" "application_s3" {
   role = var.application_task_role_name
   policy_arn = aws_iam_policy.s3_read_write.arn

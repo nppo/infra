@@ -149,3 +149,8 @@ resource "aws_iam_policy" "elasticsearch_read_access" {
     { elasticsearch_arn: aws_elasticsearch_domain.this.arn }
   )
 }
+
+resource "aws_iam_role_policy_attachment" "application_elastic" {
+role = var.application_task_role_name
+policy_arn = aws_iam_policy.elasticsearch_read_access.arn
+}
