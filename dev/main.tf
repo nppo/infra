@@ -141,5 +141,4 @@ module "service" {
   image_upload_bucket_arn = module.image-upload-bucket.image_bucket_arn
   application_task_role_arn = module.ecs-cluster.application_task_role_arn
   application_task_role_name = module.ecs-cluster.application_task_role_name
-  superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
 }

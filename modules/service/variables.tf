@@ -21,9 +21,3 @@ variable "application_task_role_name" {
   type        = string
   default     = ""
 }
-
-variable "superuser_task_role_name" {
-  description = "The name of the IAM role that is used by superuser tasks"
-  type        = string
-  default     = ""
-}
