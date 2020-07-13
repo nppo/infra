@@ -1,5 +1,5 @@
 resource "aws_secretsmanager_secret" "django_harvester" {
-  name = "search-portal/django"
+  name = "search-portal/django-harvester"
   description = "Mainly the Django SECRET_KEY setting for harvester, but possibly in the future other miscellaneous secrets"
 }
 
