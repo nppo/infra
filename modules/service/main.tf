@@ -11,7 +11,7 @@ resource "aws_secretsmanager_secret_version" "django" {
 
 # From here new style Django secrets per AWS service
 resource "aws_secretsmanager_secret" "django_portal" {
-  name = "search-portal/django"
+  name = "search-portal/django-search-portal"
   description = "Mainly the Django SECRET_KEY setting for portal service, but possibly in the future other miscellaneous secrets"
 }
 
