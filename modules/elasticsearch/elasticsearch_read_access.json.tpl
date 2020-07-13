@@ -9,6 +9,13 @@
       "Resource": [
         "${elasticsearch_arn}/*"
       ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": "iam:PassRole",
+      "Resource": [
+        "AmazonESReadOnlyAccess"
+      ]
     }
   ]
 }
