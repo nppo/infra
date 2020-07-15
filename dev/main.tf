@@ -102,19 +102,19 @@ module "load-balancer" {
   default_security_group_id = module.vpc.default_security_group_id
 }
 
+module "image-upload-bucket" {
+  source = "../modules/image-upload-bucket"
+
+  name = "search-portal-media-uploads-${local.env}"
+  project = local.project
+}
+
 module "log_group" {
   source = "../modules/log-group"
 
   project = local.project
   env = local.env
   retention_in_days = 14
-}
-
-module "image-upload-bucket" {
-  source = "../modules/image-upload-bucket"
-
-  name = "search-portal-media-uploads-${local.env}"
-  project = local.project
 }
 
 module "elasticsearch" {
