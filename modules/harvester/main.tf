@@ -1,17 +1,7 @@
-resource "aws_secretsmanager_secret" "django_harvester" {
-  name = "search-portal/django-harvester"
-  description = "Mainly the Django SECRET_KEY setting for harvester, but possibly in the future other miscellaneous secrets"
-}
-
-resource "aws_secretsmanager_secret_version" "django_harvester" {
-  secret_id     = aws_secretsmanager_secret.django_harvester.id
-  secret_string = jsonencode({ secret_key = "" })
-}
-
 data "template_file" "task_secrets_policy" {
   template = file("${path.module}/task-secrets-policy.json.tpl")
   vars = {
-    django_credentials_arn = aws_secretsmanager_secret.django_harvester.arn
+    django_credentials_arn = var.django_secrets_arn
     postgres_credentials_application_arn = var.postgres_credentials_application_arn
   }
 }
