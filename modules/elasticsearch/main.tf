@@ -126,3 +126,31 @@ resource "aws_elasticsearch_domain" "this" {
 
   depends_on = [aws_iam_service_linked_role.es]
 }
+
+resource "aws_iam_policy" "elasticsearch_full_access" {
+  name        = "SurfpolElasticSearchFullAccess"
+  description = "Policy for full access to surfpol elasticsearch cluster"
+  policy = templatefile(
+    "${path.module}/elasticsearch_full_access.json.tpl",
+    { elasticsearch_arn: aws_elasticsearch_domain.this.arn }
+  )
+}
+
+resource "aws_iam_role_policy_attachment" "superuser_elastic" {
+  role = var.superuser_task_role_name
+  policy_arn = aws_iam_policy.elasticsearch_full_access.arn
+}
+
+resource "aws_iam_policy" "elasticsearch_read_access" {
+  name        = "SurfpolElasticSearchReadAccess"
+  description = "Policy for read-access to surfpol elasticsearch cluster"
+  policy = templatefile(
+    "${path.module}/elasticsearch_read_access.json.tpl",
+    { elasticsearch_arn: aws_elasticsearch_domain.this.arn }
+  )
+}
+
+resource "aws_iam_role_policy_attachment" "application_elastic" {
+role = var.application_task_role_name
+policy_arn = aws_iam_policy.elasticsearch_read_access.arn
+}
