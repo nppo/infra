@@ -149,4 +149,5 @@ module "harvester" {
   source = "../modules/harvester"
   postgres_credentials_application_arn = module.rds.postgres_credentials_application_arn
   harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
+  django_secrets_arn = module.ecs-cluster.django_secrets_arn
 }
