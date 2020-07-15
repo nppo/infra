@@ -17,6 +17,11 @@ resource "aws_iam_role_policy_attachment" "application_secretsmanager" {
   policy_arn = aws_iam_policy.harvester_task_secrets_policy.arn
 }
 
+resource "aws_elasticache_subnet_group" "harvester_redis_subnet_group" {
+  name       = "harvester-redis-subnet-group"
+  subnet_ids = var.subnet_ids
+}
+
 resource "aws_elasticache_cluster" "harvester_redis" {
   cluster_id           = "harvester"
   engine               = "redis"
@@ -25,4 +30,6 @@ resource "aws_elasticache_cluster" "harvester_redis" {
   parameter_group_name = "default.redis5.0"
   engine_version       = "5.0.6"
   port                 = 6379
+  subnet_group_name    = aws_elasticache_subnet_group.harvester_redis_subnet_group.name
 }
+

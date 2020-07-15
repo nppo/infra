@@ -15,3 +15,9 @@ variable "django_secrets_arn" {
   type = string
   default = ""
 }
+
+variable "subnet_ids" {
+  description = "A list of subnet ids the redis queue will be made available in"
+  type        = list(string)
+  default     = []
+}
