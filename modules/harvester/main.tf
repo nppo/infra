@@ -1,4 +1,4 @@
-data "template_file" "task_secrets_policy" {
+data "template_file" "harvester_task_secrets_policy" {
   template = file("${path.module}/task-secrets-policy.json.tpl")
   vars = {
     django_credentials_arn = var.django_secrets_arn
@@ -6,15 +6,15 @@ data "template_file" "task_secrets_policy" {
   }
 }
 
-resource "aws_iam_policy" "task_secrets_policy" {
-  name        = "ecsTasksSecretsPolicy"
+resource "aws_iam_policy" "harvester_task_secrets_policy" {
+  name        = "ecsHarvesterTasksSecretsPolicy"
   description = "Policy for using secrets by harvester tasks"
-  policy = data.template_file.task_secrets_policy.rendered
+  policy = data.template_file.harvester_task_secrets_policy.rendered
 }
 
 resource "aws_iam_role_policy_attachment" "application_secretsmanager" {
   role = var.harvester_task_role_name
-  policy_arn = aws_iam_policy.task_secrets_policy.arn
+  policy_arn = aws_iam_policy.harvester_task_secrets_policy.arn
 }
 
 resource "aws_elasticache_cluster" "harvester_redis" {
