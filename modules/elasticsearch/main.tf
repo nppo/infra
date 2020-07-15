@@ -151,6 +151,11 @@ resource "aws_iam_policy" "elasticsearch_read_access" {
 }
 
 resource "aws_iam_role_policy_attachment" "application_elastic" {
-role = var.application_task_role_name
-policy_arn = aws_iam_policy.elasticsearch_read_access.arn
+  role = var.application_task_role_name
+  policy_arn = aws_iam_policy.elasticsearch_read_access.arn
+}
+
+resource "aws_iam_role_policy_attachment" "application_read_elastic" {
+  role = var.application_task_role_name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonESReadOnlyAccess"
 }
