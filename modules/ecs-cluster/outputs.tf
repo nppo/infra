@@ -17,3 +17,8 @@ output "superuser_task_role_name" {
   value = aws_iam_role.superuser_task_role.name
   description = "The name of the IAM role that is used by superuser tasks"
 }
+
+output "django_secrets_arn" {
+  value = aws_secretsmanager_secret.django.arn
+  description = "The ARN of the secret containing Django secrets"
+}

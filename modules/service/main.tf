@@ -1,25 +1,3 @@
-# Django is ambigious we're going to use django_portal instead, keeping these until migration is complete
-resource "aws_secretsmanager_secret" "django" {
-  name = "search-portal/django"
-  description = "Mainly the Django SECRET_KEY setting, but possibly in the future other miscellaneous secrets"
-}
-
-resource "aws_secretsmanager_secret_version" "django" {
-  secret_id     = aws_secretsmanager_secret.django.id
-  secret_string = jsonencode({ secret_key = "" })
-}
-
-# From here new style Django secrets per AWS service
-resource "aws_secretsmanager_secret" "django_portal" {
-  name = "search-portal/django-search-portal"
-  description = "Mainly the Django SECRET_KEY setting for portal service, but possibly in the future other miscellaneous secrets"
-}
-
-resource "aws_secretsmanager_secret_version" "django_portal" {
-  secret_id     = aws_secretsmanager_secret.django_portal.id
-  secret_string = jsonencode({ secret_key = "" })
-}
-
 resource "aws_secretsmanager_secret" "surfconext" {
   name = "search-portal/surfconext"
   description = "The OIDC secret key"
@@ -45,7 +23,7 @@ resource "aws_secretsmanager_secret_version" "elastic_search" {
 data "template_file" "task_secrets_policy" {
   template = file("${path.module}/task-secrets-policy.json.tpl")
   vars = {
-    django_credentials_arn = aws_secretsmanager_secret.django_portal.arn
+    django_credentials_arn = var.django_secrets_arn
     surfconext_credentials_arn = aws_secretsmanager_secret.surfconext.arn
     elastic_search_credentials_arn = aws_secretsmanager_secret.elastic_search.arn
     postgres_credentials_application_arn = var.postgres_credentials_application_arn
@@ -54,7 +32,7 @@ data "template_file" "task_secrets_policy" {
 
 resource "aws_iam_policy" "task_secrets_policy" {
   name        = "ecsTasksSecretsPolicy"
-  description = "Policy for using secrets by search-portal tasks"
+  description = "Policy for using secrets by tasks on ECS cluster"
   policy = data.template_file.task_secrets_policy.rendered
 }
 

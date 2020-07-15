@@ -21,3 +21,9 @@ variable "application_task_role_name" {
   type        = string
   default     = ""
 }
+
+variable "django_secrets_arn" {
+  description = "The ARN of the secret containing Django secrets"
+  type = string
+  default = ""
+}
