@@ -109,6 +109,7 @@ module "image-upload-bucket" {
   project = local.project
 }
 
+# This should be deleted, but we don't have access to it
 module "log_group" {
   source = "../modules/log-group"
 
@@ -130,7 +131,6 @@ module "elasticsearch" {
   instance_volume_size = 10
   vpc_id = module.vpc.vpc_id
   subnet_id = module.vpc.private_subnet_ids[0]
-  log_group_arn = module.log_group.arn
   superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
   application_task_role_name = module.ecs-cluster.application_task_role_name
   harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
