@@ -37,3 +37,19 @@ resource "aws_cloudwatch_log_group" "this" {
   name = "/ecs/harvester"
   retention_in_days = 14
 }
+
+data "template_file" "harvester_development_data_policy" {
+  template = file("${path.module}/development-data-policy.json.tpl")
+  vars = { }
+}
+
+resource "aws_iam_policy" "harvester_development_data_policy" {
+  name        = "ecsHarvesterTasksDataPolicy"
+  description = "Policy for using data from S3"
+  policy = data.template_file.harvester_development_data_policy.rendered
+}
+
+resource "aws_iam_role_policy_attachment" "harvester_data" {
+  role = var.harvester_task_role_name
+  policy_arn = aws_iam_policy.harvester_development_data_policy.arn
+}
