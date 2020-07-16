@@ -33,3 +33,7 @@ resource "aws_elasticache_cluster" "harvester_redis" {
   subnet_group_name    = aws_elasticache_subnet_group.harvester_redis_subnet_group.name
 }
 
+resource "aws_cloudwatch_log_group" "this" {
+  name = "/ecs/harvester"
+  retention_in_days = 14
+}
