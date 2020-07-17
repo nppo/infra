@@ -102,19 +102,20 @@ module "load-balancer" {
   default_security_group_id = module.vpc.default_security_group_id
 }
 
+module "image-upload-bucket" {
+  source = "../modules/image-upload-bucket"
+
+  name = "search-portal-media-uploads-${local.env}"
+  project = local.project
+}
+
+# This should be deleted, but we don't have access to it
 module "log_group" {
   source = "../modules/log-group"
 
   project = local.project
   env = local.env
   retention_in_days = 14
-}
-
-module "image-upload-bucket" {
-  source = "../modules/image-upload-bucket"
-
-  name = "search-portal-media-uploads-${local.env}"
-  project = local.project
 }
 
 module "elasticsearch" {
@@ -130,7 +131,6 @@ module "elasticsearch" {
   instance_volume_size = 10
   vpc_id = module.vpc.vpc_id
   subnet_id = module.vpc.private_subnet_ids[0]
-  log_group_arn = module.log_group.arn
   superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
   application_task_role_name = module.ecs-cluster.application_task_role_name
   harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
@@ -150,4 +150,5 @@ module "harvester" {
   postgres_credentials_application_arn = module.rds.postgres_credentials_application_arn
   harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
   django_secrets_arn = module.ecs-cluster.django_secrets_arn
+  subnet_ids = module.vpc.private_subnet_ids
 }

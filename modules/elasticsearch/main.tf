@@ -10,29 +10,6 @@ data "aws_vpc" "selected" {
   id = var.vpc_id
 }
 
-resource "aws_cloudwatch_log_resource_policy" "this" {
-  policy_name = "${var.project}-${var.env}-es-${var.domain_name}"
-  policy_document = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "es.amazonaws.com"
-      },
-      "Action": [
-        "logs:PutLogEvents",
-        "logs:PutLogEventsBatch",
-        "logs:CreateLogStream"
-      ],
-      "Resource": "${var.log_group_arn}"
-    }
-  ]
-}
-POLICY
-}
-
 resource "aws_iam_service_linked_role" "es" {
   aws_service_name = "es.amazonaws.com"
 }
@@ -53,6 +30,34 @@ resource "aws_security_group" "this" {
   }
 
   tags = merge(local.common_tags, {Domain = "${var.project}-elasticsearch-${var.domain_name}"})
+}
+
+resource "aws_cloudwatch_log_group" "this" {
+  name = "elasticsearch"
+  retention_in_days = 14
+}
+
+resource "aws_cloudwatch_log_resource_policy" "this" {
+  policy_name = "elasticsearch-logs"
+  policy_document = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "es.amazonaws.com"
+      },
+      "Action": [
+        "logs:PutLogEvents",
+        "logs:PutLogEventsBatch",
+        "logs:CreateLogStream"
+      ],
+      "Resource": "${aws_cloudwatch_log_group.this.arn}"
+    }
+  ]
+}
+POLICY
 }
 
 resource "aws_elasticsearch_domain" "this" {
@@ -105,19 +110,19 @@ resource "aws_elasticsearch_domain" "this" {
   }
 
   log_publishing_options {
-    cloudwatch_log_group_arn = var.log_group_arn
+    cloudwatch_log_group_arn = aws_cloudwatch_log_group.this.arn
     log_type                 = "INDEX_SLOW_LOGS"
     enabled                  = true
   }
 
   log_publishing_options {
-    cloudwatch_log_group_arn = var.log_group_arn
+    cloudwatch_log_group_arn = aws_cloudwatch_log_group.this.arn
     log_type                 = "SEARCH_SLOW_LOGS"
     enabled                  = true
   }
 
   log_publishing_options {
-    cloudwatch_log_group_arn = var.log_group_arn
+    cloudwatch_log_group_arn = aws_cloudwatch_log_group.this.arn
     log_type                 = "ES_APPLICATION_LOGS"
     enabled                  = true
   }

@@ -107,3 +107,8 @@ resource "aws_iam_role_policy_attachment" "scheduled_event_ecs_task_role" {
   role       = aws_iam_role.ecs_events_role.name
   policy_arn = aws_iam_policy.event_task_role.arn
 }
+
+resource "aws_cloudwatch_log_group" "this" {
+  name = "/ecs/search-portal"
+  retention_in_days = 14
+}

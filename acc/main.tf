@@ -56,17 +56,6 @@ module "vpc" {
   public_keys = local.public_keys
 }
 
-module "rds" {
-  source = "../modules/rds"
-
-  db_name = "edushare"
-  project = local.project
-  env = local.env
-
-  vpc_id = module.vpc.vpc_id
-  subnet_ids = module.vpc.private_subnet_ids
-}
-
 module "bastion" {
   source = "../modules/bastion"
 
@@ -79,6 +68,18 @@ module "bastion" {
   ipv6_eduvpn_ips = local.ipv6_eduvpn_ips
   public_keys = local.public_keys
   database_security_group = module.rds.security_group_access_id
+  default_security_group_id = module.vpc.default_security_group_id
+}
+
+module "rds" {
+  source = "../modules/rds"
+
+  db_name = "edushare"
+  project = local.project
+  env = local.env
+
+  vpc_id = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnet_ids
 }
 
 module "ecs-cluster" {
@@ -86,8 +87,6 @@ module "ecs-cluster" {
 
   project = local.project
   env = local.env
-  application_task_role_arn = module.service.application_task_role_arn
-  superuser_task_role_arn = module.service.superuser_task_role_arn
 }
 
 module "load-balancer" {
@@ -110,6 +109,7 @@ module "image-upload-bucket" {
   project = local.project
 }
 
+# This should be deleted, but we don't have access to it
 module "log_group" {
   source = "../modules/log-group"
 
@@ -126,17 +126,29 @@ module "elasticsearch" {
 
   domain_name = "main"
   elasticsearch_version = "7.4"
-  instance_type = "t2.medium.elasticsearch"
+  instance_type = "m4.xlarge.elasticsearch"
   instance_count = 1
   instance_volume_size = 10
   vpc_id = module.vpc.vpc_id
   subnet_id = module.vpc.private_subnet_ids[0]
-  log_group_arn = module.log_group.arn
+  superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
+  application_task_role_name = module.ecs-cluster.application_task_role_name
+  harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
 }
 
 module "service" {
   source = "../modules/service"
   postgres_credentials_application_arn = module.rds.postgres_credentials_application_arn
-  elasticsearch_arn = module.elasticsearch.elasticsearch_arn
   image_upload_bucket_arn = module.image-upload-bucket.image_bucket_arn
+  application_task_role_arn = module.ecs-cluster.application_task_role_arn
+  application_task_role_name = module.ecs-cluster.application_task_role_name
+  django_secrets_arn = module.ecs-cluster.django_secrets_arn
+}
+
+module "harvester" {
+  source = "../modules/harvester"
+  postgres_credentials_application_arn = module.rds.postgres_credentials_application_arn
+  harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
+  django_secrets_arn = module.ecs-cluster.django_secrets_arn
+  subnet_ids = module.vpc.private_subnet_ids
 }
