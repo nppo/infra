@@ -56,6 +56,39 @@ module "vpc" {
   public_keys = local.public_keys
 }
 
+module "bastion" {
+  source = "../modules/bastion"
+
+  project = local.project
+  env = local.env
+
+  vpc_id = module.vpc.vpc_id
+  subnet_id = module.vpc.public_subnet_ids[0]
+  ipv4_eduvpn_ips = local.ipv4_eduvpn_ips
+  ipv6_eduvpn_ips = local.ipv6_eduvpn_ips
+  public_keys = local.public_keys
+  database_security_group = module.rds.security_group_access_id
+  default_security_group_id = module.vpc.default_security_group_id
+}
+
+module "rds" {
+  source = "../modules/rds"
+
+  db_name = "edushare"
+  project = local.project
+  env = local.env
+
+  vpc_id = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnet_ids
+}
+
+module "ecs-cluster" {
+  source = "../modules/ecs-cluster"
+
+  project = local.project
+  env = local.env
+}
+
 module "load-balancer" {
   source = "../modules/load-balancer"
 
@@ -67,4 +100,55 @@ module "load-balancer" {
   eduvpn_ips = local.eduvpn_ips
   domain_name = local.domain_name
   default_security_group_id = module.vpc.default_security_group_id
+}
+
+module "image-upload-bucket" {
+  source = "../modules/image-upload-bucket"
+
+  name = "search-portal-media-uploads-${local.env}"
+  project = local.project
+}
+
+# This should be deleted, but we don't have access to it
+module "log_group" {
+  source = "../modules/log-group"
+
+  project = local.project
+  env = local.env
+  retention_in_days = 14
+}
+
+module "elasticsearch" {
+  source = "../modules/elasticsearch"
+
+  project = local.project
+  env = local.env
+
+  domain_name = "main"
+  elasticsearch_version = "7.4"
+  instance_type = "m4.xlarge.elasticsearch"
+  instance_count = 1
+  instance_volume_size = 10
+  vpc_id = module.vpc.vpc_id
+  subnet_id = module.vpc.private_subnet_ids[0]
+  superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
+  application_task_role_name = module.ecs-cluster.application_task_role_name
+  harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
+}
+
+module "service" {
+  source = "../modules/service"
+  postgres_credentials_application_arn = module.rds.postgres_credentials_application_arn
+  image_upload_bucket_arn = module.image-upload-bucket.image_bucket_arn
+  application_task_role_arn = module.ecs-cluster.application_task_role_arn
+  application_task_role_name = module.ecs-cluster.application_task_role_name
+  django_secrets_arn = module.ecs-cluster.django_secrets_arn
+}
+
+module "harvester" {
+  source = "../modules/harvester"
+  postgres_credentials_application_arn = module.rds.postgres_credentials_application_arn
+  harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
+  django_secrets_arn = module.ecs-cluster.django_secrets_arn
+  subnet_ids = module.vpc.private_subnet_ids
 }
