@@ -1,7 +1,6 @@
 locals {
   project = "surfpol"
   env = "prod"
-  bastion_eip = "18.158.161.34"
   ipv4_eduvpn_ips = ["145.90.230.0/23", "145.101.60.0/23"]
   ipv6_eduvpn_ips = ["2001:610:450:50::/60", "2001:610:3:2150::/60"]
   eduvpn_ips = concat(local.ipv4_eduvpn_ips, local.ipv6_eduvpn_ips)

@@ -1,7 +1,6 @@
 locals {
   project = "surfpol"
   env = "dev"
-  bastion_eip = "3.126.214.73"
   ipv4_eduvpn_ips = ["145.90.230.0/23", "145.101.60.0/23"]
   ipv6_eduvpn_ips = ["2001:610:450:50::/60", "2001:610:3:2150::/60"]
   eduvpn_ips = concat(local.ipv4_eduvpn_ips, local.ipv6_eduvpn_ips)
@@ -65,7 +64,6 @@ module "bastion" {
 
   vpc_id = module.vpc.vpc_id
   subnet_id = module.vpc.public_subnet_ids[0]
-  bastion_eip = local.bastion_eip
   ipv4_eduvpn_ips = local.ipv4_eduvpn_ips
   ipv6_eduvpn_ips = local.ipv6_eduvpn_ips
   public_keys = local.public_keys

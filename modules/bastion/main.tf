@@ -95,12 +95,13 @@ resource "aws_instance" "bastion-host" {
   volume_tags = local.common_tags
 }
 
-data "aws_eip" "bastion_eip" {
-  public_ip = var.bastion_eip
-}
+resource "aws_eip" "bastion" {
+  vpc = true
+  instance = aws_instance.bastion-host.id
 
-resource "aws_eip_association" "eip_assoc" {
-  instance_id   = aws_instance.bastion-host.id
-  allocation_id = data.aws_eip.bastion_eip.id
-}
+  tags = merge(local.common_tags, {Name = "${var.project}-bastion"})
 
+  lifecycle {
+    prevent_destroy = true
+  }
+}

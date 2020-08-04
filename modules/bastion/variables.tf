@@ -22,12 +22,6 @@ variable "vpc_id" {
   default     = ""
 }
 
-variable "bastion_eip" {
-  description = "Public ip address for the bastion"
-  type        = string
-  default     = ""
-}
-
 variable "ipv4_eduvpn_ips" {
   description = "A list of ipv4 eduvpn ips"
   type        = list(string)
