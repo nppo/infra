@@ -21,6 +21,17 @@
           "${elasticsearch_arn}/latest-en/_search",
           "${elasticsearch_arn}/latest-nl/_search"
       ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "es:ESHttpGet",
+        "es:ESHttpPost"
+      ],
+      "Resource": [
+        "${elasticsearch_arn}/search-results",
+        "${elasticsearch_arn}/search-results/*"
+      ]
     }
   ]
 }
