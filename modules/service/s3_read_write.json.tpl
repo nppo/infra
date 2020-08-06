@@ -10,7 +10,7 @@
       {
         "Sid": "AllObjectActions",
         "Effect": "Allow",
-        "Action": "s3:*Object",
+        "Action": ["s3:*Object*"],
         "Resource": ["${bucket_arn}/*"]
       }
     ]
