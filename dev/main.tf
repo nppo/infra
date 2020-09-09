@@ -36,7 +36,7 @@ resource "aws_iam_account_alias" "alias" {
 module "user-access" {
   source = "../modules/user-access"
 
-  users = {"fako.berkers@surfnet.nl" = ["superusers"]
+  users = {"FakoBerkers" = ["superusers"]
            "kruys@zilverline.com" = ["superusers"]
            "rhartog@zilverline.com" = ["superusers"]}
 }
