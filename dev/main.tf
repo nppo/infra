@@ -151,4 +151,5 @@ module "harvester" {
   harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
   django_secrets_arn = module.ecs-cluster.django_secrets_arn
   subnet_ids = module.vpc.private_subnet_ids
+  harvester_content_bucket_name = "surfpol-harvester-content-${local.env}"
 }

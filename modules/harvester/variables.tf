@@ -21,3 +21,9 @@ variable "subnet_ids" {
   type        = list(string)
   default     = []
 }
+
+variable "harvester_content_bucket_name" {
+  description = "Bucket name where harvester content gets stored"
+  type        = string
+  default     = ""
+}
