@@ -30,7 +30,7 @@ resource "aws_sns_topic" "harvester_metrics" {
 }
 
 data "template_file" "sns_cloudwatch_policy" {
-  template = file("${path.module}/sns-cloudwatch-policy.json.tpl")
+  template = file("${path.module}/../cloudwatch/sns-cloudwatch-policy.json.tpl")
   vars = {
     sns_topic_arn = aws_sns_topic.harvester_metrics.arn
   }
@@ -42,7 +42,7 @@ resource "aws_sns_topic_policy" "sns_cloudwatch_policy" {
   policy = data.template_file.sns_cloudwatch_policy.rendered
 }
 
-resource "aws_cloudwatch_metric_alarm" "cpu" {
+resource "aws_cloudwatch_metric_alarm" "harvester_cpu" {
   alarm_name                = "service-cpu"
   dimensions                = {
     "ClusterName" = "surfpol"
@@ -61,7 +61,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu" {
   ok_actions = [aws_sns_topic.harvester_metrics.arn]
 }
 
-resource "aws_cloudwatch_metric_alarm" "memory" {
+resource "aws_cloudwatch_metric_alarm" "harvester_memory" {
   alarm_name                = "service-memory"
   dimensions                = {
     "ClusterName" = "surfpol"
