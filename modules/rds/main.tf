@@ -44,9 +44,8 @@ resource "aws_security_group" "db" {
 }
 
 resource "random_password" "password" {
-  length = 16
-  special = true
-  override_special = "/@"
+  length = 32
+  special = false
 }
 
 resource "aws_secretsmanager_secret" "rds_credentials" {
@@ -108,9 +107,8 @@ resource "aws_db_instance" "surfpol" {
 }
 
 resource "random_password" "random_application_password" {
-  length = 16
-  special = true
-  override_special = "/@"
+  length = 32
+  special = false
 }
 
 resource "aws_secretsmanager_secret" "rds_credentials_application" {
