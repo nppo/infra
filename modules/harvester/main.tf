@@ -53,3 +53,25 @@ resource "aws_iam_role_policy_attachment" "harvester_data" {
   role = var.harvester_task_role_name
   policy_arn = aws_iam_policy.harvester_development_data_policy.arn
 }
+
+resource "aws_s3_bucket" "harvester_content_bucket" {
+  bucket = var.harvester_content_bucket_name
+}
+
+data "template_file" "harvester_content_policy" {
+  template = file("${path.module}/harvester-content-policy.json.tpl")
+  vars = {
+    harvester_content_bucket_arn = aws_s3_bucket.harvester_content_bucket.arn
+  }
+}
+
+resource "aws_iam_policy" "harvester_content_policy" {
+  name        = "ecsHarvesterTasksContentPolicy"
+  description = "Policy for using harvester content from S3"
+  policy = data.template_file.harvester_content_policy.rendered
+}
+
+resource "aws_iam_role_policy_attachment" "harvester_content" {
+  role = var.harvester_task_role_name
+  policy_arn = aws_iam_policy.harvester_content_policy.arn
+}
