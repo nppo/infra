@@ -27,3 +27,9 @@ variable "harvester_content_bucket_name" {
   type        = string
   default     = ""
 }
+
+variable "vpc_id" {
+  description = "ID of the VPC to create the harvester in"
+  type        = string
+  default     = ""
+}

@@ -22,6 +22,32 @@ resource "aws_elasticache_subnet_group" "harvester_redis_subnet_group" {
   subnet_ids = var.subnet_ids
 }
 
+resource "aws_security_group" "access_redis" {
+  name        = "redis-access"
+  description = "Redis access"
+  vpc_id      = var.vpc_id
+}
+
+resource "aws_security_group" "protect_redis" {
+  name = "redis-protect"
+  description = "Redis protection"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 6379
+    to_port     = 6379
+    protocol    = "tcp"
+    security_groups = [aws_security_group.access_redis.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    security_groups = [aws_security_group.access_redis.id]
+  }
+}
+
 resource "aws_elasticache_cluster" "harvester_redis" {
   cluster_id           = "harvester"
   engine               = "redis"
@@ -31,6 +57,7 @@ resource "aws_elasticache_cluster" "harvester_redis" {
   engine_version       = "5.0.6"
   port                 = 6379
   subnet_group_name    = aws_elasticache_subnet_group.harvester_redis_subnet_group.name
+  security_group_ids   = [aws_security_group.protect_redis.id]
 }
 
 resource "aws_cloudwatch_log_group" "this" {
