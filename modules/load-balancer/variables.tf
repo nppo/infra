@@ -39,3 +39,9 @@ variable "default_security_group_id" {
   type = string
   default = ""
 }
+
+variable "service_access_security_group_id" {
+  description = "The ID of the security group to access the service"
+  type = string
+  default = ""
+}

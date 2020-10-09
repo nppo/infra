@@ -89,19 +89,6 @@ module "ecs-cluster" {
   env = local.env
 }
 
-module "load-balancer" {
-  source = "../modules/load-balancer"
-
-  project = local.project
-  env = local.env
-
-  vpc_id = module.vpc.vpc_id
-  subnet_ids = module.vpc.public_subnet_ids
-  eduvpn_ips = local.eduvpn_ips
-  domain_name = local.domain_name
-  default_security_group_id = module.vpc.default_security_group_id
-}
-
 module "image-upload-bucket" {
   source = "../modules/image-upload-bucket"
 
@@ -138,6 +125,8 @@ module "elasticsearch" {
 
 module "service" {
   source = "../modules/service"
+
+  vpc_id = module.vpc.vpc_id
   postgres_credentials_application_arn = module.rds.postgres_credentials_application_arn
   image_upload_bucket_arn = module.image-upload-bucket.image_bucket_arn
   application_task_role_arn = module.ecs-cluster.application_task_role_arn
@@ -147,9 +136,25 @@ module "service" {
 
 module "harvester" {
   source = "../modules/harvester"
+
+  vpc_id = module.vpc.vpc_id
   postgres_credentials_application_arn = module.rds.postgres_credentials_application_arn
   harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
   django_secrets_arn = module.ecs-cluster.django_secrets_arn
   subnet_ids = module.vpc.private_subnet_ids
   harvester_content_bucket_name = "surfpol-harvester-content-${local.env}"
+}
+
+module "load-balancer" {
+  source = "../modules/load-balancer"
+
+  project = local.project
+  env = local.env
+
+  vpc_id = module.vpc.vpc_id
+  subnet_ids = module.vpc.public_subnet_ids
+  eduvpn_ips = local.eduvpn_ips
+  domain_name = local.domain_name
+  default_security_group_id = module.vpc.default_security_group_id
+  service_access_security_group_id = module.service.service_access_security_group_id
 }

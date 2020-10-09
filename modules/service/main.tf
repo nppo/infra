@@ -112,3 +112,22 @@ resource "aws_cloudwatch_log_group" "this" {
   name = "/ecs/search-portal"
   retention_in_days = 14
 }
+
+resource "aws_security_group" "access_service" {
+  name        = "service-access"
+  description = "Service access"
+  vpc_id      = var.vpc_id
+}
+
+resource "aws_security_group" "protect_service" {
+  name = "service-protect"
+  description = "Service protection"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 0
+    to_port     = 8080
+    protocol    = "tcp"
+    security_groups = [aws_security_group.access_service.id]
+  }
+}

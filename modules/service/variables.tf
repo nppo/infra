@@ -27,3 +27,9 @@ variable "django_secrets_arn" {
   type = string
   default = ""
 }
+
+variable "vpc_id" {
+  description = "ID of the VPC to create the service in"
+  type        = string
+  default     = ""
+}

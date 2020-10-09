@@ -20,7 +20,6 @@ resource "aws_security_group" "load-balancer" {
     ipv6_cidr_blocks = ["::/0"]
   }
 
-
   ingress {
     description = "HTTP traffic"
     from_port   = 80
@@ -28,14 +27,6 @@ resource "aws_security_group" "load-balancer" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
-  }
-
-  ingress {
-    description = "Traffic from default security group"
-    from_port = 0
-    to_port = 0
-    protocol = -1
-    security_groups = [var.default_security_group_id]
   }
 
   egress {
@@ -55,7 +46,11 @@ resource "aws_lb" "surfpol" {
 
   enable_deletion_protection = true
 
-  security_groups = [var.default_security_group_id, aws_security_group.load-balancer.id]
+  security_groups = [
+    var.default_security_group_id,
+    var.service_access_security_group_id,
+    aws_security_group.load-balancer.id
+  ]
   subnets = var.subnet_ids
 
   tags = merge(local.common_tags, {Name = "${var.project}-${var.env}"})
