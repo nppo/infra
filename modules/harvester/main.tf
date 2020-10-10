@@ -102,3 +102,29 @@ resource "aws_iam_role_policy_attachment" "harvester_content" {
   role = var.harvester_task_role_name
   policy_arn = aws_iam_policy.harvester_content_policy.arn
 }
+
+resource "aws_security_group" "access_harvester" {
+  name        = "harvester-access"
+  description = "Harvester access"
+  vpc_id      = var.vpc_id
+}
+
+resource "aws_security_group" "protect_harvester" {
+  name = "harvester-protect"
+  description = "Harvester protection"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 0
+    to_port     = 8080
+    protocol    = "tcp"
+    security_groups = [aws_security_group.access_harvester.id]
+  }
+
+  ingress {
+    from_port   = 0
+    to_port     = 5555
+    protocol    = "tcp"
+    security_groups = [aws_security_group.access_harvester.id]
+  }
+}

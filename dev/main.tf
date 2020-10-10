@@ -56,21 +56,6 @@ module "vpc" {
   public_keys = local.public_keys
 }
 
-module "bastion" {
-  source = "../modules/bastion"
-
-  project = local.project
-  env = local.env
-
-  vpc_id = module.vpc.vpc_id
-  subnet_id = module.vpc.public_subnet_ids[0]
-  ipv4_eduvpn_ips = local.ipv4_eduvpn_ips
-  ipv6_eduvpn_ips = local.ipv6_eduvpn_ips
-  public_keys = local.public_keys
-  database_security_group = module.rds.security_group_access_id
-  default_security_group_id = module.vpc.default_security_group_id
-}
-
 module "rds" {
   source = "../modules/rds"
 
@@ -157,4 +142,21 @@ module "load-balancer" {
   domain_name = local.domain_name
   default_security_group_id = module.vpc.default_security_group_id
   service_access_security_group_id = module.service.service_access_security_group_id
+}
+
+module "bastion" {
+  source = "../modules/bastion"
+
+  project = local.project
+  env = local.env
+
+  vpc_id = module.vpc.vpc_id
+  subnet_id = module.vpc.public_subnet_ids[0]
+  ipv4_eduvpn_ips = local.ipv4_eduvpn_ips
+  ipv6_eduvpn_ips = local.ipv6_eduvpn_ips
+  public_keys = local.public_keys
+  database_security_group = module.rds.security_group_access_id
+  harvester_security_group = module.harvester.harvester_access_security_group_id
+  default_security_group_id = module.vpc.default_security_group_id
+
 }

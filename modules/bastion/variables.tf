@@ -46,6 +46,12 @@ variable "database_security_group" {
   default     = ""
 }
 
+variable "harvester_security_group" {
+  description = "ID of the harvester security group"
+  type        = string
+  default     = ""
+}
+
 variable "default_security_group_id" {
   description = "The ID of the default security group"
   type = string
