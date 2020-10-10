@@ -74,13 +74,6 @@ module "ecs-cluster" {
   env = local.env
 }
 
-module "image-upload-bucket" {
-  source = "../modules/image-upload-bucket"
-
-  name = "search-portal-media-uploads-${local.env}"
-  project = local.project
-}
-
 # This should be deleted, but we don't have access to it
 module "log_group" {
   source = "../modules/log-group"
@@ -111,9 +104,9 @@ module "elasticsearch" {
 module "service" {
   source = "../modules/service"
 
+  env = local.env
   vpc_id = module.vpc.vpc_id
   postgres_credentials_application_arn = module.rds.postgres_credentials_application_arn
-  image_upload_bucket_arn = module.image-upload-bucket.image_bucket_arn
   application_task_role_arn = module.ecs-cluster.application_task_role_arn
   application_task_role_name = module.ecs-cluster.application_task_role_name
   django_secrets_arn = module.ecs-cluster.django_secrets_arn
