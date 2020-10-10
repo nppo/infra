@@ -43,7 +43,7 @@ resource "aws_sns_topic_policy" "sns_cloudwatch_policy" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "harvester_cpu" {
-  alarm_name                = "service-cpu"
+  alarm_name                = "harvester-cpu"
   dimensions                = {
     "ClusterName" = "surfpol"
     "ServiceName" = "harvester"
@@ -62,7 +62,7 @@ resource "aws_cloudwatch_metric_alarm" "harvester_cpu" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "harvester_memory" {
-  alarm_name                = "service-memory"
+  alarm_name                = "harvester-memory"
   dimensions                = {
     "ClusterName" = "surfpol"
     "ServiceName" = "harvester"
