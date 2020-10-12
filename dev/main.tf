@@ -151,5 +151,4 @@ module "bastion" {
   database_security_group = module.rds.security_group_access_id
   harvester_security_group = module.harvester.harvester_access_security_group_id
   default_security_group_id = module.vpc.default_security_group_id
-
 }
