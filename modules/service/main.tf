@@ -1,13 +1,3 @@
-resource "aws_secretsmanager_secret" "surfconext" {
-  name = "search-portal/surfconext"
-  description = "The OIDC secret key"
-}
-
-resource "aws_secretsmanager_secret_version" "surfconext" {
-  secret_id     = aws_secretsmanager_secret.surfconext.id
-  secret_string = jsonencode({ secret_key = "" })
-}
-
 # These Elastic Search secrets refer to resources outside of AWS
 # They are only used by the search-portal service
 resource "aws_secretsmanager_secret" "elastic_search" {

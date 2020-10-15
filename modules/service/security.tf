@@ -22,6 +22,48 @@ resource "aws_security_group" "protect_service" {
 }
 
 ##################################################
+# Passwords and other random secrets
+##################################################
+
+resource "random_password" "random_service_password" {
+  length = 32
+  special = false
+}
+
+resource "aws_secretsmanager_secret" "rds_credentials_service" {
+  name = "search-portal/postgres-application"
+  description = "Service credentials for the RDS Postgres instance"
+}
+
+resource "aws_secretsmanager_secret_version" "postgres_password_service" {
+  secret_id     = aws_secretsmanager_secret.rds_credentials_service.id
+  secret_string = jsonencode({
+    password = random_password.random_service_password.result
+    application_password = random_password.random_service_password.result
+  })
+}
+
+resource "aws_secretsmanager_secret" "surfconext" {
+  name = "search-portal/surfconext"
+  description = "The OIDC secret key"
+}
+
+resource "aws_secretsmanager_secret_version" "surfconext" {
+  secret_id     = aws_secretsmanager_secret.surfconext.id
+  secret_string = jsonencode({ secret_key = "" })
+}
+
+resource "aws_secretsmanager_secret" "django" {
+  name = "search-portal/django"
+  description = "The Django SECRET_KEY setting and superuser admin password"
+}
+
+resource "aws_secretsmanager_secret_version" "django" {
+  secret_id     = aws_secretsmanager_secret.django.id
+  secret_string = jsonencode({ secret_key = "", admin_password = "" })
+}
+
+##################################################
 # AWS policies that manage access rights
 ##################################################
 
@@ -30,10 +72,10 @@ resource "aws_security_group" "protect_service" {
 data "template_file" "task_secrets_policy" {
   template = file("${path.module}/task-secrets-policy.json.tpl")
   vars = {
-    django_credentials_arn = var.django_secrets_arn
+    django_credentials_arn = aws_secretsmanager_secret_version.django.arn
     surfconext_credentials_arn = aws_secretsmanager_secret.surfconext.arn
     elastic_search_credentials_arn = aws_secretsmanager_secret.elastic_search.arn
-    postgres_credentials_application_arn = var.postgres_credentials_application_arn
+    postgres_credentials_application_arn = aws_secretsmanager_secret_version.postgres_password_service.arn
   }
 }
 

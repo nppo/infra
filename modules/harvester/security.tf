@@ -57,6 +57,38 @@ resource "aws_security_group" "protect_redis" {
 }
 
 ##################################################
+# Passwords
+##################################################
+
+resource "random_password" "random_harvester_password" {
+  length = 32
+  special = false
+}
+
+resource "aws_secretsmanager_secret" "rds_credentials_harvester" {
+  name = "harvester/postgres-application"
+  description = "Harvester credentials for the RDS Postgres instance"
+}
+
+resource "aws_secretsmanager_secret_version" "postgres_password_harvester" {
+  secret_id     = aws_secretsmanager_secret.rds_credentials_harvester.id
+  secret_string = jsonencode({
+    password = random_password.random_harvester_password.result
+    application_password = random_password.random_harvester_password.result
+  })
+}
+
+resource "aws_secretsmanager_secret" "django" {
+  name = "harvester/django"
+  description = "The Django SECRET_KEY setting and superuser admin password"
+}
+
+resource "aws_secretsmanager_secret_version" "django" {
+  secret_id     = aws_secretsmanager_secret.django.id
+  secret_string = jsonencode({ secret_key = "", admin_password = "" })
+}
+
+##################################################
 # AWS policies that manage access rights
 ##################################################
 
@@ -65,8 +97,8 @@ resource "aws_security_group" "protect_redis" {
 data "template_file" "harvester_task_secrets_policy" {
   template = file("${path.module}/task-secrets-policy.json.tpl")
   vars = {
-    django_credentials_arn = var.django_secrets_arn
-    postgres_credentials_application_arn = var.postgres_credentials_application_arn
+    django_credentials_arn = aws_secretsmanager_secret_version.django.arn
+    postgres_credentials_application_arn = aws_secretsmanager_secret_version.postgres_password_harvester.arn
   }
 }
 

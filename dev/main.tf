@@ -106,19 +106,15 @@ module "service" {
 
   env = local.env
   vpc_id = module.vpc.vpc_id
-  postgres_credentials_application_arn = module.rds.postgres_credentials_application_arn
   application_task_role_arn = module.ecs-cluster.application_task_role_arn
   application_task_role_name = module.ecs-cluster.application_task_role_name
-  django_secrets_arn = module.ecs-cluster.django_secrets_arn
 }
 
 module "harvester" {
   source = "../modules/harvester"
 
   vpc_id = module.vpc.vpc_id
-  postgres_credentials_application_arn = module.rds.postgres_credentials_application_arn
   harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
-  django_secrets_arn = module.ecs-cluster.django_secrets_arn
   subnet_ids = module.vpc.private_subnet_ids
   harvester_content_bucket_name = "surfpol-harvester-content-${local.env}"
 }
