@@ -81,7 +81,7 @@ resource "aws_db_instance" "surfpol" {
   storage_type             = "gp2"
   engine                   = "postgres"
   engine_version           = "12.2"
-  instance_class           = "db.t2.micro"
+  instance_class           = "db.t3.small"
   name                     = var.db_name
   #storage_encrypted        = true
 
@@ -91,7 +91,7 @@ resource "aws_db_instance" "surfpol" {
   password                 = jsondecode(aws_secretsmanager_secret_version.postgres_password.secret_string)["password"]
 
   final_snapshot_identifier = "${var.project}-${var.db_name}-final"
-  backup_retention_period  = 35
+  backup_retention_period  = 30
   backup_window            = "02:00-03:00"
   delete_automated_backups = true
 
