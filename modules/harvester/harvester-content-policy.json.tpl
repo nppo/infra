@@ -2,15 +2,16 @@
     "Version": "2012-10-17",
     "Statement": [
         {
+            "Sid": "ListObjectsInBucket",
             "Effect": "Allow",
-            "Action": [
-                "s3:GetObject",
-                "s3:PutObject",
-                "s3:DeleteObject"
-            ],
-            "Resource": [
-                "${harvester_content_bucket_arn}"
-            ]
+            "Action": ["s3:ListBucket"],
+            "Resource": ["${harvester_content_bucket_arn}"]
+        },
+        {
+            "Sid": "AllObjectActions",
+            "Effect": "Allow",
+            "Action": ["s3:*Object*"],
+            "Resource": ["${harvester_content_bucket_arn}/*"]
         }
     ]
 }

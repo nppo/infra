@@ -90,13 +90,3 @@ resource "aws_iam_policy" "surfpol-ecs" {
   description = "Policy for managing the ${var.project} ECS cluster"
   policy = data.template_file.surfpol.rendered
 }
-
-resource "aws_secretsmanager_secret" "django" {
-  name = "search-portal/django"
-  description = "Mainly the Django SECRET_KEY setting, but possibly in the future other miscellaneous secrets"
-}
-
-resource "aws_secretsmanager_secret_version" "django" {
-  secret_id     = aws_secretsmanager_secret.django.id
-  secret_string = jsonencode({ secret_key = "" })
-}

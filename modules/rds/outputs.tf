@@ -6,7 +6,3 @@ output "security_group_access_id" {
 output "postgres_credentials_arn" {
   value = aws_secretsmanager_secret.rds_credentials.arn
 }
-
-output "postgres_credentials_application_arn" {
-  value = aws_secretsmanager_secret.rds_credentials_application.arn
-}

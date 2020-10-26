@@ -49,7 +49,7 @@ resource "random_password" "password" {
 }
 
 resource "aws_secretsmanager_secret" "rds_credentials" {
-  name = "search-portal/postgres"
+  name = "postgres"
   description = "Root user credentials for the RDS Postgres instance"
 }
 
@@ -81,7 +81,7 @@ resource "aws_db_instance" "surfpol" {
   storage_type             = "gp2"
   engine                   = "postgres"
   engine_version           = "12.2"
-  instance_class           = "db.t2.micro"
+  instance_class           = "db.t3.small"
   name                     = var.db_name
   #storage_encrypted        = true
 
@@ -91,7 +91,7 @@ resource "aws_db_instance" "surfpol" {
   password                 = jsondecode(aws_secretsmanager_secret_version.postgres_password.secret_string)["password"]
 
   final_snapshot_identifier = "${var.project}-${var.db_name}-final"
-  backup_retention_period  = 35
+  backup_retention_period  = 30
   backup_window            = "02:00-03:00"
   delete_automated_backups = true
 
@@ -104,19 +104,4 @@ resource "aws_db_instance" "surfpol" {
   allow_major_version_upgrade = false
 
   tags = merge(local.common_tags, {Name = "${var.project}-${var.db_name}"})
-}
-
-resource "random_password" "random_application_password" {
-  length = 32
-  special = false
-}
-
-resource "aws_secretsmanager_secret" "rds_credentials_application" {
-  name = "search-portal/postgres-application"
-  description = "Application credentials for the RDS Postgres instance"
-}
-
-resource "aws_secretsmanager_secret_version" "postgres_password_application" {
-  secret_id     = aws_secretsmanager_secret.rds_credentials_application.id
-  secret_string = jsonencode({ password = random_password.random_application_password.result })
 }
