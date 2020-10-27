@@ -75,3 +75,9 @@ variable "harvester_task_role_name" {
   type        = string
   default     = ""
 }
+
+variable "firehose_security_group" {
+  description = "The id of the firehose security group"
+  type        = string
+  default     = ""
+}

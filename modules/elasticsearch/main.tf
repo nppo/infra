@@ -27,6 +27,10 @@ resource "aws_security_group" "this" {
     cidr_blocks = [
       data.aws_vpc.selected.cidr_block
     ]
+
+    security_groups = [
+      var.firehose_security_group
+    ]
   }
 
   tags = merge(local.common_tags, {Domain = "${var.project}-elasticsearch-${var.domain_name}"})
@@ -97,7 +101,7 @@ resource "aws_elasticsearch_domain" "this" {
 
   vpc_options {
     subnet_ids = [var.subnet_id]
-    security_group_ids = ["${aws_security_group.this.id}"]
+    security_group_ids = [aws_security_group.this.id]
   }
 
   domain_endpoint_options {

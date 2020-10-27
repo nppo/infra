@@ -106,6 +106,19 @@ resource "aws_iam_role_policy_attachment" "application_s3" {
   policy_arn = aws_iam_policy.s3_read_write.arn
 }
 
+# Write logs to firehose
+
+resource "aws_iam_policy" "put_firehose" {
+  name        = "WriteToFirehose"
+  description = "Policy for putting to firehost"
+  policy = templatefile("${path.module}/write_to_firehose.tpl", {})
+}
+
+resource "aws_iam_role_policy_attachment" "application_firehose" {
+  role = var.application_task_role_name
+  policy_arn = aws_iam_policy.put_firehose.arn
+}
+
 # Scheduled tasks
 
 data "aws_iam_policy_document" "events" {
