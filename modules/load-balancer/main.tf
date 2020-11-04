@@ -43,6 +43,7 @@ resource "aws_security_group" "load-balancer" {
 resource "aws_lb" "surfpol" {
   name = "${var.project}-loadbalancer-${var.env}"
   load_balancer_type = "application"
+  ip_address_type = "dualstack"
 
   enable_deletion_protection = true
 
