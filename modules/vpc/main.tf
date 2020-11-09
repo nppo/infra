@@ -8,13 +8,13 @@ locals {
   # maps subnets to the supplied availability zones using the modulo operator
   public_subnets_azs = {
     for subnet in var.public_subnets:
-    subnet => var.azs["${index(var.public_subnets, subnet) % length(var.azs)}"]
+    subnet => var.azs[index(var.public_subnets, subnet) % length(var.azs)]
   }
 
   # maps subnets to the supplied availability zones using the modulo operator
   private_subnets_azs = {
     for subnet in var.private_subnets:
-    subnet => var.azs["${index(var.private_subnets, subnet) % length(var.azs)}"]
+    subnet => var.azs[index(var.private_subnets, subnet) % length(var.azs)]
   }
 
   # mapping of availability zones to the subnet we will provision the nat gateway in
@@ -56,7 +56,7 @@ resource "aws_subnet" "private" {
 
 resource "aws_internet_gateway" "this" {
   vpc_id = aws_vpc.this.id
-  tags = merge(local.common_tags, {Name = "${var.project}"})
+  tags = merge(local.common_tags, {Name = var.project})
 }
 
 resource "aws_egress_only_internet_gateway" "this" {
