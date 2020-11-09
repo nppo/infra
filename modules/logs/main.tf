@@ -3,7 +3,7 @@ resource "aws_cloudwatch_log_group" "firelens" {
 }
 
 resource "aws_s3_bucket" "logs_s3" {
-  bucket = "surfpol-logs-backup"
+  bucket = var.bucket_name
   acl    = "private"
 }
 

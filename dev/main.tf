@@ -104,10 +104,14 @@ module "elasticsearch" {
 module "logs" {
   source = "../modules/logs"
 
+  project = local.project
+  env = local.env
+
   vpc_id = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnet_ids
   elasticsearch_arn = module.elasticsearch.elasticsearch_arn
   firehose_security_group = module.elasticsearch.elasticsearch_access_security_group
+  bucket_name = "${local.project}-logs-backup"
 }
 
 module "service" {
