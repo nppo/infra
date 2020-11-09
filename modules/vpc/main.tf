@@ -29,6 +29,7 @@ resource "aws_vpc" "this" {
 
   enable_dns_support = true
   enable_dns_hostnames = true
+  assign_generated_ipv6_cidr_block = true
 }
 
 resource "aws_subnet" "public" {
@@ -38,6 +39,7 @@ resource "aws_subnet" "public" {
   cidr_block = each.key
   availability_zone = each.value
   map_public_ip_on_launch = true
+  ipv6_cidr_block = cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, index(var.public_subnets, each.key) + 1)
 
   tags = merge(local.common_tags, {Name = "${var.project}-public-${index(var.public_subnets, each.key)}"})
 }
@@ -171,6 +173,16 @@ resource "aws_network_acl_rule" "http" {
   to_port        = 80
 }
 
+resource "aws_network_acl_rule" "http-ipv6" {
+  network_acl_id = aws_network_acl.public.id
+  rule_number     = 101
+  protocol        = "tcp"
+  rule_action     = "allow"
+  ipv6_cidr_block = "::/0"
+  from_port       = 80
+  to_port         = 80
+}
+
 resource "aws_network_acl_rule" "https" {
   network_acl_id = aws_network_acl.public.id
   rule_number    = 110
@@ -179,6 +191,16 @@ resource "aws_network_acl_rule" "https" {
   cidr_block     = "0.0.0.0/0"
   from_port      = 443
   to_port        = 443
+}
+
+resource "aws_network_acl_rule" "https-ipv6" {
+  network_acl_id = aws_network_acl.public.id
+  rule_number     = 111
+  protocol        = "tcp"
+  rule_action     = "allow"
+  ipv6_cidr_block = "::/0"
+  from_port       = 443
+  to_port         = 443
 }
 
 resource "aws_network_acl_rule" "range" {
@@ -224,6 +246,17 @@ resource "aws_network_acl_rule" "egress-http" {
   to_port        = 80
 }
 
+resource "aws_network_acl_rule" "egress-http-ipv6" {
+  network_acl_id = aws_network_acl.public.id
+  egress          = true
+  rule_number     = 101
+  protocol        = "tcp"
+  rule_action     = "allow"
+  ipv6_cidr_block = "::/0"
+  from_port       = 80
+  to_port         = 80
+}
+
 resource "aws_network_acl_rule" "egress-https" {
   network_acl_id = aws_network_acl.public.id
   egress         = true
@@ -233,6 +266,17 @@ resource "aws_network_acl_rule" "egress-https" {
   cidr_block     = "0.0.0.0/0"
   from_port      = 443
   to_port        = 443
+}
+
+resource "aws_network_acl_rule" "egress-https-ipv6" {
+  network_acl_id = aws_network_acl.public.id
+  egress          = true
+  rule_number     = 111
+  protocol        = "tcp"
+  rule_action     = "allow"
+  ipv6_cidr_block = "::/0"
+  from_port       = 443
+  to_port         = 443
 }
 
 resource "aws_network_acl_rule" "egress-cidr" {
@@ -255,6 +299,17 @@ resource "aws_network_acl_rule" "egress-range" {
   cidr_block     = "0.0.0.0/0"
   from_port      = 1024
   to_port        = 65535
+}
+
+resource "aws_network_acl_rule" "egress-range-ipv6" {
+  network_acl_id = aws_network_acl.public.id
+  egress          = true
+  rule_number     = 131
+  protocol        = "tcp"
+  rule_action     = "allow"
+  ipv6_cidr_block = "::/0"
+  from_port       = 1024
+  to_port         = 65535
 }
 
 # based on https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-best-practices.html#nacl-rules-scenario-2
