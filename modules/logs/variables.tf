@@ -16,8 +16,8 @@ variable "subnet_ids" {
   default     = []
 }
 
-variable "elasticsearch_security_group" {
-  description = "ID of the elasticsearch security group"
+variable "firehose_security_group" {
+  description = "ID of the elasticsearch access security group"
   type        = string
   default     = ""
 }

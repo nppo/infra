@@ -110,7 +110,7 @@ resource "aws_iam_role_policy_attachment" "application_s3" {
 
 resource "aws_iam_policy" "put_firehose" {
   name        = "WriteToFirehose"
-  description = "Policy for putting to firehost"
+  description = "Policy for putting to firehose"
   policy = templatefile("${path.module}/write_to_firehose.tpl", {})
 }
 

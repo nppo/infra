@@ -7,3 +7,8 @@ output "elasticsearch_security_group" {
   value = aws_security_group.this.id
   description = "The id of the elasticsearch security group"
 }
+
+output "elasticsearch_access_security_group" {
+  value = aws_security_group.access.id
+  description = "The id of the elasticsearch access security group"
+}

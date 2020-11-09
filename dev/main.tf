@@ -99,7 +99,6 @@ module "elasticsearch" {
   superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
   application_task_role_name = module.ecs-cluster.application_task_role_name
   harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
-  firehose_security_group = module.logs.firehose_security_group
 }
 
 module "logs" {
@@ -108,7 +107,7 @@ module "logs" {
   vpc_id = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnet_ids
   elasticsearch_arn = module.elasticsearch.elasticsearch_arn
-  elasticsearch_security_group = module.elasticsearch.elasticsearch_security_group
+  firehose_security_group = module.elasticsearch.elasticsearch_access_security_group
 }
 
 module "service" {

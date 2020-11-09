@@ -14,28 +14,6 @@ resource "aws_iam_service_linked_role" "es" {
   aws_service_name = "es.amazonaws.com"
 }
 
-resource "aws_security_group" "this" {
-  name        = "${var.project}-elasticsearch-${var.domain_name}"
-  description = "Allow inbound traffic to elasticsearch cluster from VPC"
-  vpc_id      = var.vpc_id
-
-  ingress {
-    from_port = 443
-    to_port   = 443
-    protocol  = "tcp"
-
-    cidr_blocks = [
-      data.aws_vpc.selected.cidr_block
-    ]
-
-    security_groups = [
-      var.firehose_security_group
-    ]
-  }
-
-  tags = merge(local.common_tags, {Domain = "${var.project}-elasticsearch-${var.domain_name}"})
-}
-
 resource "aws_cloudwatch_log_group" "this" {
   name = "elasticsearch"
   retention_in_days = 14
