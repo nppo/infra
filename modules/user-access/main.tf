@@ -45,3 +45,14 @@ resource "aws_iam_group_membership" "this" {
   group = each.key
 }
 
+# Based on: https://www.solarwindsmsp.com/blog/nist-password-standards2
+resource "aws_iam_account_password_policy" "this" {
+  hard_expiry                    = false
+  minimum_password_length        = 14
+  require_lowercase_characters   = false
+  require_numbers                = false
+  require_uppercase_characters   = false
+  require_symbols                = false
+  allow_users_to_change_password = true
+  password_reuse_prevention      = 2
+}

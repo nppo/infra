@@ -80,7 +80,7 @@ resource "aws_db_instance" "surfpol" {
   max_allocated_storage    = 1000
   storage_type             = "gp2"
   engine                   = "postgres"
-  engine_version           = "12.2"
+  engine_version           = "12.3"
   instance_class           = "db.t3.small"
   name                     = var.db_name
   #storage_encrypted        = true
