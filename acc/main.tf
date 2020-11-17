@@ -121,6 +121,7 @@ module "service" {
   vpc_id = module.vpc.vpc_id
   application_task_role_arn = module.ecs-cluster.application_task_role_arn
   application_task_role_name = module.ecs-cluster.application_task_role_name
+  superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
 }
 
 module "harvester" {

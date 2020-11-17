@@ -16,6 +16,12 @@ variable "application_task_role_name" {
   default     = ""
 }
 
+variable "superuser_task_role_name" {
+  description = "The name of thes superuser IAM role"
+  type        = string
+  default     = ""
+}
+
 variable "vpc_id" {
   description = "ID of the VPC to create the service in"
   type        = string

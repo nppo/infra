@@ -119,6 +119,11 @@ resource "aws_iam_role_policy_attachment" "application_firehose" {
   policy_arn = aws_iam_policy.put_firehose.arn
 }
 
+resource "aws_iam_role_policy_attachment" "superuser_firehose" {
+  role = var.superuser_task_role_name
+  policy_arn = aws_iam_policy.put_firehose.arn
+}
+
 # Scheduled tasks
 
 data "aws_iam_policy_document" "events" {
