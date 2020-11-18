@@ -24,7 +24,7 @@ terraform {
 }
 
 provider "aws" {
-  version    = "~> 2.63"
+  version    = "~> 3.12"
   profile    = "pol-prod"
   region     = "eu-central-1"
 }
@@ -101,6 +101,19 @@ module "elasticsearch" {
   harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
 }
 
+module "logs" {
+  source = "../modules/logs"
+
+  project = local.project
+  env = local.env
+
+  vpc_id = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnet_ids
+  elasticsearch_arn = module.elasticsearch.elasticsearch_arn
+  firehose_security_group = module.elasticsearch.elasticsearch_access_security_group
+  bucket_name = "${local.project}-${local.env}-logs-backup"
+}
+
 module "service" {
   source = "../modules/service"
 
@@ -108,6 +121,7 @@ module "service" {
   vpc_id = module.vpc.vpc_id
   application_task_role_arn = module.ecs-cluster.application_task_role_arn
   application_task_role_name = module.ecs-cluster.application_task_role_name
+  superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
 }
 
 module "harvester" {
