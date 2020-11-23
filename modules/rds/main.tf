@@ -70,10 +70,20 @@ resource "aws_db_parameter_group" "postgres12" {
   tags = merge(local.common_tags, {Name = "${var.project}-${var.db_name}"})
 }
 
+resource "aws_kms_key" "db_encryption_key" {
+  description = "Database encryption key"
+  tags = merge(local.common_tags, {Name="${var.project}-${var.db_name}-encryption-key"})
+}
+
+resource "aws_kms_alias" "db_encryption_key_alias" {
+  name          = "alias/${var.db_name}-encryption-key"
+  target_key_id = aws_kms_key.db_encryption_key.key_id
+}
+
 resource "aws_db_instance" "surfpol" {
   identifier               = "${var.project}-${var.db_name}"
   db_subnet_group_name     = aws_db_subnet_group.this.name
-  multi_az                 = false
+  multi_az                 = true
   vpc_security_group_ids   = [aws_security_group.db.id]
 
   allocated_storage        = 20
@@ -83,7 +93,8 @@ resource "aws_db_instance" "surfpol" {
   engine_version           = "12.3"
   instance_class           = "db.t3.small"
   name                     = var.db_name
-  #storage_encrypted        = true
+  storage_encrypted        = true
+  kms_key_id               = aws_kms_key.db_encryption_key.arn
 
   parameter_group_name     = aws_db_parameter_group.postgres12.name
 
