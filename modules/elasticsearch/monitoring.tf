@@ -1,6 +1,7 @@
 resource "aws_sns_topic" "elastic_metrics" {
   name = "elastic-metrics"
   display_name = "Elastic Search Metrics"
+  kms_master_key_id = var.monitoring_kms_key
 }
 
 data "template_file" "sns_cloudwatch_policy" {

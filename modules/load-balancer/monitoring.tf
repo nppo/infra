@@ -1,6 +1,7 @@
 resource "aws_sns_topic" "load_balancer_metrics" {
   name = "load-balancer-metrics"
   display_name = "Load Balancer Metrics"
+  kms_master_key_id = var.monitoring_kms_key
 }
 
 data "template_file" "sns_cloudwatch_policy" {

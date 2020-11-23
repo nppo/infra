@@ -1,6 +1,7 @@
 resource "aws_sns_topic" "rds_metrics" {
   name = "rds-metrics"
   display_name = "RDS Metrics"
+  kms_master_key_id = var.monitoring_kms_key
 }
 
 data "template_file" "sns_cloudwatch_policy" {

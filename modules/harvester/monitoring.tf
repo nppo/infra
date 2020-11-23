@@ -1,6 +1,7 @@
 resource "aws_sns_topic" "harvester_metrics" {
   name = "harvester-metrics"
   display_name = "Harvester Metrics"
+  kms_master_key_id = var.monitoring_kms_key
 }
 
 data "template_file" "sns_cloudwatch_policy" {

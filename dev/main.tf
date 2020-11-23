@@ -33,6 +33,15 @@ resource "aws_iam_account_alias" "alias" {
   account_alias = "surfpol-dev"
 }
 
+resource "aws_kms_key" "monitoring_encryption_key" {
+  description = "Monitoring encryption key"
+}
+
+resource "aws_kms_alias" "monitoring_encryption_key_alias" {
+  name          = "alias/monitoring-encryption-key"
+  target_key_id = aws_kms_key.monitoring_encryption_key.key_id
+}
+
 module "user-access" {
   source = "../modules/user-access"
 
@@ -65,6 +74,7 @@ module "rds" {
 
   vpc_id = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnet_ids
+  monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
 }
 
 module "ecs-cluster" {
@@ -99,6 +109,7 @@ module "elasticsearch" {
   superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
   application_task_role_name = module.ecs-cluster.application_task_role_name
   harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
+  monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
 }
 
 module "logs" {
@@ -122,6 +133,7 @@ module "service" {
   application_task_role_arn = module.ecs-cluster.application_task_role_arn
   application_task_role_name = module.ecs-cluster.application_task_role_name
   superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
+  monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
 }
 
 module "harvester" {
@@ -131,6 +143,7 @@ module "harvester" {
   harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
   subnet_ids = module.vpc.private_subnet_ids
   harvester_content_bucket_name = "surfpol-harvester-content-${local.env}"
+  monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
 }
 
 module "load-balancer" {
@@ -145,6 +158,7 @@ module "load-balancer" {
   domain_name = local.domain_name
   default_security_group_id = module.vpc.default_security_group_id
   service_access_security_group_id = module.service.service_access_security_group_id
+  monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
 }
 
 module "bastion" {

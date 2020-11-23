@@ -1,6 +1,7 @@
 resource "aws_sns_topic" "service_metrics" {
   name = "service-metrics"
   display_name = "Service Metrics"
+  kms_master_key_id = var.monitoring_kms_key
 }
 
 data "template_file" "sns_cloudwatch_policy" {

@@ -21,3 +21,9 @@ variable "vpc_id" {
   type        = string
   default     = ""
 }
+
+variable "monitoring_kms_key" {
+  description = "KMS key for monitoring"
+  type        = string
+  default     = ""
+}
