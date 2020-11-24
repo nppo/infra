@@ -4,7 +4,9 @@
     {
       "Effect": "Allow",
       "Action": [
-        "es:ESHttpGet"
+        "es:ESHttpGet",
+        "es:Describe*",
+        "es:List*"
       ],
       "Resource": [
         "${elasticsearch_arn}/*"
