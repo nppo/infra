@@ -12,7 +12,42 @@ resource "aws_secretsmanager_secret_version" "elastic_search" {
 
 resource "aws_s3_bucket" "surfpol-image-uploads" {
   bucket = "search-portal-media-uploads-${var.env}"
-  acl = "public-read"
+  acl = "private"
+
+  versioning {
+    enabled = true
+  }
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm     = "AES256"
+      }
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "deny_http_policy" {
+  bucket = aws_s3_bucket.surfpol-image-uploads.id
+
+  policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": "*",
+      "Resource": "${aws_s3_bucket.surfpol-image-uploads.arn}/*",
+      "Condition": {
+        "Bool": {
+          "aws:SecureTransport": "false"
+        }
+      }
+    }
+  ]
+}
+POLICY
 }
 
 resource "aws_cloudwatch_event_rule" "clearlogins" {
