@@ -44,7 +44,7 @@ resource "aws_lb" "surfpol" {
   name = "${var.project}-loadbalancer-${var.env}"
   load_balancer_type = "application"
   ip_address_type = "dualstack"
-
+  drop_invalid_header_fields = true
   enable_deletion_protection = true
 
   security_groups = [

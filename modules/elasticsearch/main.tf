@@ -35,20 +35,29 @@ resource "aws_cloudwatch_log_resource_policy" "this" {
         "logs:PutLogEventsBatch",
         "logs:CreateLogStream"
       ],
-      "Resource": "${aws_cloudwatch_log_group.this.arn}"
+      "Resource": "arn:aws:logs:*"
     }
   ]
 }
 POLICY
 }
 
+resource "aws_kms_key" "elasticsearch_encryption_key" {
+  description = "Elasticsearch encryption key"
+}
+
+resource "aws_kms_alias" "elasticsearch_encryption_key_alias" {
+  name          = "alias/elasticsearch-encryption-key"
+  target_key_id = aws_kms_key.elasticsearch_encryption_key.key_id
+}
+
 resource "aws_elasticsearch_domain" "this" {
   domain_name           = "${var.project}-${var.domain_name}"
   elasticsearch_version = var.elasticsearch_version
 
-  # TODO: add logic to enable this if correct instance type is selected
   encrypt_at_rest {
-    enabled = false
+    enabled = true
+    kms_key_id = aws_kms_key.elasticsearch_encryption_key.key_id
   }
 
   cluster_config {
@@ -112,6 +121,26 @@ resource "aws_elasticsearch_domain" "this" {
   tags = merge(local.common_tags, {Domain = "${var.project}-${var.domain_name}"})
 
   depends_on = [aws_iam_service_linked_role.es]
+}
+
+resource "aws_elasticsearch_domain_policy" "main" {
+  domain_name = aws_elasticsearch_domain.this.domain_name
+
+  access_policies = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Action": "es:*",
+      "Resource": "${aws_elasticsearch_domain.this.arn}/*"
+    }
+  ]
+}
+POLICY
 }
 
 resource "aws_iam_policy" "elasticsearch_full_access" {
