@@ -4,7 +4,7 @@ locals {
   ipv4_eduvpn_ips = ["145.90.230.0/23", "145.101.60.0/23"]
   ipv6_eduvpn_ips = ["2001:610:450:50::/60", "2001:610:3:2150::/60"]
   eduvpn_ips = concat(local.ipv4_eduvpn_ips, local.ipv6_eduvpn_ips)
-  domain_name = "prod.surfedushare.nl"
+  domain_name = "zoekportaal.surf.nl"
   public_keys = {
     "fako": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC+BbIDLbS4QBfJZUyzg8FEFOGGOxt5EpIHc4NaTPjKIYsQfvRrKC6gNJR9Euoby0Jlm/T8ZXcONzylnYp62ZhY5+gp51wLhxsq9vg3wYbT2lPs2HIZ3PA99etmwneA3uffm9NrE16DDrAo2Z9qy3wup4wF9sVtT2i2quk+DMwbbVeGVjGQ7RoxeH/lo8wLW3Jx+TMMSoryDHalVNWrXZwOpZQVmTJD87E7jrzmJih+XQFNmvEkq7e/+QPs8P17w5Zv7BESPz8FZ3p6e85rLogCeIa5WqDx1oooUSLUhGNgI+xvcvCJ6LG5VUckKV+uI2mkoe6eIf3YF69HU6yWZ68YR3P9rk7QeAZom/LKQBlZt/eexCG6E9rz8cvqEBNgwTdI3LAj+NcByjktw/hpugF2PECH16cCR5nro83xHrxOeomDgL441FRHuP3SK5rdXwTL8SniN0KAe5FuXsq35eVNj0h7+F8NbHWZIEr4VxGJhehW/zkzrt6pWHeQxIZwEHk= fako@burte",
     "jelmer": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDL+pYSi8xWN6YdSlNPmBR+Iu5XfRSufXmqrNMesQprU0fSNHE0PiLGv//4a7ZVh6uGCzmqbhQVHbAs50hbODe+Wd5LkNHPnAdu/7gT+Bx3IOwqrZgNyFYxzMRxzKeuxhIwZQjMQNfA79qY+kc/RUX+zaph9fDABbcC5IVDJtpSyPRfx0J3duEbk0opBKLHSV+5gXhyiA39zE7Gxe898AjsKPKClQAUclHYgSK/+U7XrUUMCBJXW/uPVsuO2o0QU9mGxdM0eYf12dP72izYz0wkde5vmVgOpa8UittIUjgrl6+Id2uAvvjIynV46tTOvp8FLe0v0sCsg2ao9tVejxdvYpctg636CtoHsRYbESUDaHrmP5L3NG2UM9J2UIw1e+wpbGGuxvDBTCQK+Pmj6Kn7vTpFfhB3g8+uyWCilVHvtQ0uQ+jjvErODb9GTV9Ozt7LZU1WXtGqC/ODqwg8Y+H5lMCHR4P/yUnP76m3w6Td1h3W+JddZBTGKPkVqtuwbwAxuXC7AH1tFUY6LIqXcnWOv5S59T52CTEMUS1pFY4Anlj7PfBHoNFr/p0+CeLswMRf8SCb+I6G9Cb3ch2BHtKv8aivxuFMmUhjmSrvdda12v5KULwQ+YogXJeahFaoGulc/e81nCPhC0sFFMsggenKCALcENUcDnyx0Lvt9w7myw== Jelmer'siPhone",
