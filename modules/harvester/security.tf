@@ -88,6 +88,21 @@ resource "aws_secretsmanager_secret_version" "django" {
   secret_string = jsonencode({ secret_key = "", admin_password = "" })
 }
 
+resource "random_password" "random_flower_password" {
+  length = 32
+  special = false
+}
+
+resource "aws_secretsmanager_secret" "flower_credentials_harvester" {
+  name = "harvester/flower-basic-auth-credentials"
+  description = "Flower basic auth credentials"
+}
+
+resource "aws_secretsmanager_secret_version" "flower_password_harvester" {
+  secret_id     = aws_secretsmanager_secret.flower_credentials_harvester.id
+  secret_string = "supersurf:${random_password.random_flower_password.result}"
+}
+
 ##################################################
 # AWS policies that manage access rights
 ##################################################
@@ -99,6 +114,7 @@ data "template_file" "harvester_task_secrets_policy" {
   vars = {
     django_credentials_arn = aws_secretsmanager_secret_version.django.arn
     postgres_credentials_application_arn = aws_secretsmanager_secret_version.postgres_password_harvester.arn
+    flower_credentials_arn = aws_secretsmanager_secret_version.flower_password_harvester.arn
   }
 }
 
