@@ -7,3 +7,8 @@ output "harvester_bucket_arn" {
   value = aws_s3_bucket.harvester_content_bucket.arn
   description = "The arn of the harvester content bucket"
 }
+
+output "harvester_bucket_name" {
+  value = aws_s3_bucket.harvester_content_bucket.id
+  description = "The name of the harvester content bucket"
+}

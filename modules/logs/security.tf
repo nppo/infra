@@ -60,7 +60,10 @@ resource "aws_iam_role_policy" "firehose-logs" {
         "s3:ListBucketMultipartUploads",
         "s3:PutObject"
       ],
-      "Resource": "*"
+      "Resource": [
+        "${aws_s3_bucket.logs_s3.arn}",
+        "${aws_s3_bucket.logs_s3.arn}/*"
+      ]
     }
   ]
 }

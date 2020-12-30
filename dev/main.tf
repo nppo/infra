@@ -123,6 +123,7 @@ module "logs" {
   elasticsearch_arn = module.elasticsearch.elasticsearch_arn
   firehose_security_group = module.elasticsearch.elasticsearch_access_security_group
   bucket_name = "${local.project}-logs-backup"
+  harvester_bucket_name = module.harvester.harvester_bucket_name
 }
 
 module "service" {

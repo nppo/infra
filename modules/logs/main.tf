@@ -7,6 +7,12 @@ resource "aws_s3_bucket" "logs_s3" {
   acl    = "private"
 }
 
+resource "aws_s3_bucket_object" "harvester-fluent-config" {
+  bucket = var.harvester_bucket_name
+  key = "fluent.conf"
+  source = "${path.module}/fluent.conf"
+}
+
 resource "aws_iam_role" "firehose_role" {
   name = "firehose_logs_role"
 
