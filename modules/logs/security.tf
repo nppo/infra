@@ -35,3 +35,34 @@ resource "aws_iam_role_policy" "firehose-elasticsearch" {
 }
 EOF
 }
+
+resource "aws_iam_role_policy" "firehose-logs" {
+  name   = "logs"
+  role   = aws_iam_role.firehose_role.id
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:PutLogEvents"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:AbortMultipartUpload",
+        "s3:GetBucketLocation",
+        "s3:GetObject",
+        "s3:ListBucket",
+        "s3:ListBucketMultipartUploads",
+        "s3:PutObject"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
