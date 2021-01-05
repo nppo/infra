@@ -33,3 +33,9 @@ variable "monitoring_kms_key" {
   type        = string
   default     = ""
 }
+
+variable "harvester_bucket_arn" {
+  description = "arn of harvester content bucket"
+  type        = string
+  default     = ""
+}

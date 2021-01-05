@@ -97,7 +97,7 @@ resource "aws_iam_policy" "s3_read_write" {
   description = "Policy for read/write access to image upload bucket"
   policy = templatefile(
   "${path.module}/s3_read_write.json.tpl",
-  { bucket_arn: aws_s3_bucket.surfpol-image-uploads.arn }
+  { bucket_arn: aws_s3_bucket.surfpol-image-uploads.arn, harvester_bucket_arn: var.harvester_bucket_arn }
   )
 }
 
