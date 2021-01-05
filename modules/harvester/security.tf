@@ -166,3 +166,16 @@ resource "aws_iam_role_policy_attachment" "harvester_content" {
   role = var.harvester_task_role_name
   policy_arn = aws_iam_policy.harvester_content_policy.arn
 }
+#
+# Write logs to firehose
+
+resource "aws_iam_policy" "put_firehose" {
+  name        = "HarvesterWriteToFirehose"
+  description = "Policy for putting to firehose by harvester"
+  policy = templatefile("${path.module}/write_to_firehose.tpl", {})
+}
+
+resource "aws_iam_role_policy_attachment" "application_firehose" {
+  role = var.harvester_task_role_name
+  policy_arn = aws_iam_policy.put_firehose.arn
+}

@@ -39,3 +39,9 @@ variable "bucket_name" {
   type        = string
   default     = ""
 }
+
+variable "harvester_bucket_name" {
+  description = "Name of the harvester bucket"
+  type        = string
+  default     = ""
+}
