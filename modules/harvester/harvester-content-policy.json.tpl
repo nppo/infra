@@ -12,6 +12,15 @@
             "Effect": "Allow",
             "Action": ["s3:*Object*"],
             "Resource": ["${harvester_content_bucket_arn}/*"]
+        },
+        {
+          "Effect": "Allow",
+          "Action": [
+            "s3:GetBucketLocation"
+          ],
+          "Resource": [
+            "${harvester_content_bucket_arn}"
+          ]
         }
     ]
 }
