@@ -203,6 +203,17 @@ resource "aws_network_acl_rule" "https-ipv6" {
   to_port         = 443
 }
 
+
+resource "aws_network_acl_rule" "inbound-smtp" {
+  network_acl_id = aws_network_acl.public.id
+  rule_number     = 121
+  protocol        = "tcp"
+  rule_action     = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port       = 25
+  to_port         = 25
+}
+
 resource "aws_network_acl_rule" "range" {
   network_acl_id = aws_network_acl.public.id
   rule_number    = 120
@@ -312,6 +323,29 @@ resource "aws_network_acl_rule" "egress-range-ipv6" {
   to_port         = 65535
 }
 
+resource "aws_network_acl_rule" "egress-smtp" {
+  network_acl_id = aws_network_acl.public.id
+  egress         = true
+  rule_number    = 140
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 25
+  to_port        = 25
+}
+
+
+resource "aws_network_acl_rule" "egress-smtp-ipv6" {
+  network_acl_id = aws_network_acl.public.id
+  egress          = true
+  rule_number     = 141
+  protocol        = "tcp"
+  rule_action     = "allow"
+  ipv6_cidr_block = "::/0"
+  from_port       = 25
+  to_port         = 25
+}
+
 # based on https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-best-practices.html#nacl-rules-scenario-2
 resource "aws_network_acl" "private" {
   vpc_id = aws_vpc.this.id
@@ -362,6 +396,15 @@ resource "aws_network_acl" "private" {
     cidr_block = var.cidr
     from_port  = 1024
     to_port    = 65535
+  }
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 130
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 25
+    to_port    = 25
   }
 
   tags = merge(local.common_tags, {Name = "${var.project}-private"})
