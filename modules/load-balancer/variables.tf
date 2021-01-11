@@ -29,9 +29,21 @@ variable "eduvpn_ips" {
 }
 
 variable "domain_name" {
-  description = "Domain name"
+  description = "The main domain name"
   type        = string
   default     = ""
+}
+
+variable "extra_domain_names" {
+  description = "Optional extra domain names"
+  type        = list(string)
+  default     = []
+}
+
+variable "host_redirects" {
+   description = "Optional host name redirects"
+   type        = map(string)
+   default     = {}
 }
 
 variable "default_security_group_id" {

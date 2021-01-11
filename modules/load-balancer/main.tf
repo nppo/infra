@@ -83,9 +83,16 @@ resource "aws_lb_listener" "http-listener" {
   }
 }
 
-data "aws_acm_certificate" "surfpol" {
+data "aws_acm_certificate" "main" {
   domain   = var.domain_name
   statuses = ["ISSUED"]
+}
+
+data "aws_acm_certificate" "extra" {
+  for_each  = toset(var.extra_domain_names)
+
+  domain    = each.key
+  statuses  = ["ISSUED"]
 }
 
 resource "aws_lb_listener" "https-listener" {
@@ -93,7 +100,7 @@ resource "aws_lb_listener" "https-listener" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
-  certificate_arn   = data.aws_acm_certificate.surfpol.arn
+  certificate_arn   = data.aws_acm_certificate.main.arn
 
   default_action {
     type             = "forward"
@@ -101,9 +108,41 @@ resource "aws_lb_listener" "https-listener" {
   }
 }
 
+resource "aws_alb_listener_certificate" "extra" {
+  for_each        = data.aws_acm_certificate.extra
+
+  listener_arn    = aws_lb_listener.https-listener.arn
+  certificate_arn = each.value.arn
+}
+
+resource "aws_lb_listener_rule" "host_redirects" {
+  for_each     = var.host_redirects
+
+  listener_arn = aws_lb_listener.https-listener.arn
+  priority     = 1
+
+  action {
+    type          = "redirect"
+    redirect {
+      host        = each.value
+      path        = "/#{path}"
+      port        = "#{port}"
+      protocol    = "#{protocol}"
+      query       = "#{query}"
+      status_code = "HTTP_301"
+    }
+  }
+
+  condition {
+    host_header {
+      values = [each.key]
+    }
+  }
+}
+
 resource "aws_lb_listener_rule" "restrict-admin-to-eduvpn" {
   listener_arn = aws_lb_listener.https-listener.arn
-  priority = 1
+  priority = 2
 
   action {
     type = "forward"
@@ -125,7 +164,7 @@ resource "aws_lb_listener_rule" "restrict-admin-to-eduvpn" {
 
 resource "aws_lb_listener_rule" "block-admin" {
   listener_arn = aws_lb_listener.https-listener.arn
-  priority = 2
+  priority = 3
 
   action {
     type = "fixed-response"
