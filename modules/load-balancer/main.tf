@@ -119,7 +119,7 @@ resource "aws_lb_listener_rule" "host_redirects" {
   for_each     = var.host_redirects
 
   listener_arn = aws_lb_listener.https-listener.arn
-  priority     = 1
+  priority     = index(keys(var.host_redirects), each.key) + 1
 
   action {
     type          = "redirect"
@@ -142,7 +142,7 @@ resource "aws_lb_listener_rule" "host_redirects" {
 
 resource "aws_lb_listener_rule" "restrict-admin-to-eduvpn" {
   listener_arn = aws_lb_listener.https-listener.arn
-  priority = 2
+  priority = length(var.host_redirects) + 1
 
   action {
     type = "forward"
@@ -164,7 +164,7 @@ resource "aws_lb_listener_rule" "restrict-admin-to-eduvpn" {
 
 resource "aws_lb_listener_rule" "block-admin" {
   listener_arn = aws_lb_listener.https-listener.arn
-  priority = 3
+  priority = length(var.host_redirects) + 2
 
   action {
     type = "fixed-response"
