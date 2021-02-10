@@ -39,8 +39,10 @@ resource "aws_kinesis_firehose_delivery_stream" "logs_to_es" {
   name        = "logs_to_es"
   destination = "elasticsearch"
   s3_configuration {
-    role_arn   = aws_iam_role.firehose_role.arn
-    bucket_arn = aws_s3_bucket.logs_s3.arn
+    role_arn           = aws_iam_role.firehose_role.arn
+    bucket_arn         = aws_s3_bucket.logs_s3.arn
+    buffer_size        = 1
+    buffer_interval    = 60
   }
   elasticsearch_configuration {
     domain_arn = var.elasticsearch_arn
