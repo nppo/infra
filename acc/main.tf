@@ -100,7 +100,7 @@ module "elasticsearch" {
   env = local.env
 
   domain_name = "main"
-  elasticsearch_version = "7.4"
+  elasticsearch_version = "7.9"
   instance_type = "m5.xlarge.elasticsearch"
   instance_count = 1
   instance_volume_size = 10
