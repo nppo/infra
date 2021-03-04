@@ -32,7 +32,10 @@
       ],
       "Resource": [
         "${elasticsearch_arn}/search-results",
-        "${elasticsearch_arn}/search-results/*"
+        "${elasticsearch_arn}/search-results/*",
+        "${elasticsearch_arn}/harvest-logs*",
+        "${elasticsearch_arn}/document-logs*",
+        "${elasticsearch_arn}/service-logs*"
       ]
     }
   ]
