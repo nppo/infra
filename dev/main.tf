@@ -112,20 +112,6 @@ module "elasticsearch" {
   monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
 }
 
-module "logs" {
-  source = "../modules/logs"
-
-  project = local.project
-  env = local.env
-
-  vpc_id = module.vpc.vpc_id
-  subnet_ids = module.vpc.private_subnet_ids
-  elasticsearch_arn = module.elasticsearch.elasticsearch_arn
-  firehose_security_group = module.elasticsearch.elasticsearch_access_security_group
-  bucket_name = "${local.project}-logs-backup"
-  harvester_bucket_name = module.harvester.harvester_bucket_name
-}
-
 module "service" {
   source = "../modules/service"
 
