@@ -63,6 +63,12 @@ resource "aws_secretsmanager_secret_version" "django" {
   secret_string = jsonencode({ secret_key = "", admin_password = "" })
 }
 
+# This secret is likely to get generic one day, but only needed for service for now.
+resource "aws_secretsmanager_secret" "eduterm_credentials" {
+  name = "eduterm"
+  description = "API key for the Eduterm service"
+}
+
 ##################################################
 # AWS policies that manage access rights
 ##################################################
@@ -76,6 +82,7 @@ data "template_file" "task_secrets_policy" {
     surfconext_credentials_arn = aws_secretsmanager_secret.surfconext.arn
     elastic_search_credentials_arn = aws_secretsmanager_secret.elastic_search.arn
     postgres_credentials_application_arn = aws_secretsmanager_secret_version.postgres_password_service.arn
+    eduterm_credentials_arn = aws_secretsmanager_secret.eduterm_credentials.arn
   }
 }
 
