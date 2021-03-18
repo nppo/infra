@@ -66,6 +66,14 @@ resource "aws_cloudwatch_event_rule" "sync_category_filters" {
   schedule_expression = "cron(0 8 * * ? *)"
 }
 
+resource "aws_cloudwatch_event_rule" "sync_materials" {
+  name        = "sync_materials"
+  description = "Runs the sync_materials command every day"
+
+  # Every day at 8:00 am UTC
+  schedule_expression = "cron(0 8 * * ? *)"
+}
+
 resource "aws_cloudwatch_log_group" "this" {
   name = "/ecs/search-portal"
   retention_in_days = 14
