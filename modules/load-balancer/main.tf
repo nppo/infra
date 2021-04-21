@@ -86,6 +86,7 @@ resource "aws_lb_listener" "http-listener" {
 data "aws_acm_certificate" "main" {
   domain   = var.domain_name
   statuses = ["ISSUED"]
+  most_recent = true
 }
 
 data "aws_acm_certificate" "extra" {
@@ -93,6 +94,7 @@ data "aws_acm_certificate" "extra" {
 
   domain    = each.key
   statuses  = ["ISSUED"]
+  most_recent = true
 }
 
 resource "aws_lb_listener" "https-listener" {
