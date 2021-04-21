@@ -103,6 +103,11 @@ resource "aws_secretsmanager_secret_version" "flower_password_harvester" {
   secret_string = "supersurf:${random_password.random_flower_password.result}"
 }
 
+resource "aws_secretsmanager_secret" "sharekit_credentials_harvester" {
+  name = "harvester/sharekit-credentials"
+  description = "Sharekit JSON API credentials"
+}
+
 ##################################################
 # AWS policies that manage access rights
 ##################################################
@@ -115,6 +120,7 @@ data "template_file" "harvester_task_secrets_policy" {
     django_credentials_arn = aws_secretsmanager_secret_version.django.arn
     postgres_credentials_application_arn = aws_secretsmanager_secret_version.postgres_password_harvester.arn
     flower_credentials_arn = aws_secretsmanager_secret_version.flower_password_harvester.arn
+    sharekit_credentials_arn = aws_secretsmanager_secret.sharekit_credentials_harvester.arn
   }
 }
 

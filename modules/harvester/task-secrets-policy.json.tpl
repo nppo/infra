@@ -12,7 +12,8 @@
             "Resource": [
                 "${django_credentials_arn}",
                 "${postgres_credentials_application_arn}",
-                "${flower_credentials_arn}"
+                "${flower_credentials_arn}",
+                "${sharekit_credentials_arn}"
             ]
         },
         {
