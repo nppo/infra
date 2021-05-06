@@ -62,16 +62,16 @@ resource "aws_cloudwatch_event_rule" "sync_category_filters" {
   name        = "sync_category_filters"
   description = "Runs the sync_category_filters command every day"
 
-  # Every day at 8:00 am UTC
-  schedule_expression = "cron(0 8 * * ? *)"
+  # Every day at 6:00 am UTC
+  schedule_expression = "cron(0 6 * * ? *)"
 }
 
 resource "aws_cloudwatch_event_rule" "sync_materials" {
   name        = "sync_materials"
   description = "Runs the sync_materials command every day"
 
-  # Every day at 8:00 am UTC
-  schedule_expression = "cron(0 8 * * ? *)"
+  # Every day at 6:00 am UTC
+  schedule_expression = "cron(0 6 * * ? *)"
 }
 
 resource "aws_cloudwatch_log_group" "this" {
