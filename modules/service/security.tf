@@ -69,6 +69,12 @@ resource "aws_secretsmanager_secret" "eduterm_credentials" {
   description = "API key for the Eduterm service"
 }
 
+resource "aws_secretsmanager_secret" "surfrapportage_credentials" {
+  count = var.monitor_uptime ? 1 : 0
+  name = "surfrapportage"
+  description = "Credentials for surfrapportage"
+}
+
 ##################################################
 # AWS policies that manage access rights
 ##################################################
@@ -83,6 +89,7 @@ data "template_file" "task_secrets_policy" {
     elastic_search_credentials_arn = aws_secretsmanager_secret.elastic_search.arn
     postgres_credentials_application_arn = aws_secretsmanager_secret_version.postgres_password_service.arn
     eduterm_credentials_arn = aws_secretsmanager_secret.eduterm_credentials.arn
+    surfrapportage_credentials_arn = var.monitor_uptime ? aws_secretsmanager_secret.surfrapportage_credentials[0].arn : ""
   }
 }
 
@@ -111,6 +118,23 @@ resource "aws_iam_policy" "s3_read_write" {
 resource "aws_iam_role_policy_attachment" "application_s3" {
   role = var.application_task_role_name
   policy_arn = aws_iam_policy.s3_read_write.arn
+}
+
+# Read cloudwatch metrics
+
+resource "aws_iam_policy" "read_cloudwatch_metrics" {
+  name        = "ReadCloudwatchMetrics"
+  count = var.monitor_uptime ? 1 : 0
+  description = "Policy to read cloudwatch metrics for uptime"
+  policy = templatefile(
+    "${path.module}/cloudwatch_metrics.json.tpl", {}
+  )
+}
+
+resource "aws_iam_role_policy_attachment" "application_cloudwatch_metrics" {
+  count = var.monitor_uptime ? 1 : 0
+  role = var.application_task_role_name
+  policy_arn = var.monitor_uptime ? aws_iam_policy.read_cloudwatch_metrics[0].arn : null
 }
 
 # Scheduled tasks

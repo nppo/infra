@@ -125,6 +125,7 @@ module "service" {
   superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
   monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
   harvester_bucket_arn = module.harvester.harvester_bucket_arn
+  monitor_uptime = true
 }
 
 module "harvester" {
