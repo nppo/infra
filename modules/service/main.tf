@@ -80,8 +80,8 @@ resource "aws_cloudwatch_event_rule" "monitor_uptime" {
   name        = "monitor_uptime"
   description = "Sends monthly report to SURFrapportage"
 
-  # Every first day of month @ 2 o'clock
-  schedule_expression = "cron(0 2 1 * ? *)"
+  # Every first day of month @ 4 o'clock
+  schedule_expression = "cron(0 4 1 * ? *)"
 }
 
 resource "aws_cloudwatch_log_group" "this" {

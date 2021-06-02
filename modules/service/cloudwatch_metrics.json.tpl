@@ -4,12 +4,7 @@
     {
       "Effect": "Allow",
       "Action": ["cloudwatch:GetMetricData", "cloudwatch:GetMetricStatistics", "cloudwatch:ListMetrics"],
-      "Resource": "*",
-      "Condition": {
-        "StringEquals": {
-          "cloudwatch:namespace": "AWS/Route53"
-        }
-      }
+      "Resource": "*"
     }
     ]
 }
