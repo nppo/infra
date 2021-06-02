@@ -14,7 +14,8 @@
                 "${surfconext_credentials_arn}",
                 "${elastic_search_credentials_arn}",
                 "${postgres_credentials_application_arn}",
-                "${eduterm_credentials_arn}"
+                "${eduterm_credentials_arn}",
+                "${surfrapportage_credentials_arn}"
             ]
         },
         {

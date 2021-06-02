@@ -39,3 +39,9 @@ variable "harvester_bucket_arn" {
   type        = string
   default     = ""
 }
+
+variable "monitor_uptime" {
+  description = "Boolean to define whether uptime is sent to SURFrapportage"
+  type        = bool
+  default     = false
+}

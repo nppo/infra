@@ -74,7 +74,31 @@ resource "aws_cloudwatch_event_rule" "sync_materials" {
   schedule_expression = "cron(0 6 * * ? *)"
 }
 
+resource "aws_cloudwatch_event_rule" "monitor_uptime" {
+  count = var.monitor_uptime ? 1 : 0
+
+  name        = "monitor_uptime"
+  description = "Sends monthly report to SURFrapportage"
+
+  # Every first day of month @ 2 o'clock
+  schedule_expression = "cron(0 2 1 * ? *)"
+}
+
 resource "aws_cloudwatch_log_group" "this" {
   name = "/ecs/search-portal"
   retention_in_days = 14
+}
+
+# health check
+
+resource "aws_route53_health_check" "uptime_health_check" {
+  count = var.monitor_uptime ? 1 : 0
+  failure_threshold = "3"
+  fqdn              = "edusources.nl"
+  port              = 443
+  request_interval  = "30"
+  type              = "HTTPS"
+  tags = {
+    Name = "edusources-check"
+  }
 }
