@@ -407,6 +407,15 @@ resource "aws_network_acl" "private" {
     to_port    = 25
   }
 
+  egress {
+    protocol   = "tcp"
+    rule_no    = 140
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 9011
+    to_port    = 9011
+  }
+
   tags = merge(local.common_tags, {Name = "${var.project}-private"})
 }
 
