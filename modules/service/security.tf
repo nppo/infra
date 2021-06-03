@@ -89,7 +89,8 @@ data "template_file" "task_secrets_policy" {
     elastic_search_credentials_arn = aws_secretsmanager_secret.elastic_search.arn
     postgres_credentials_application_arn = aws_secretsmanager_secret_version.postgres_password_service.arn
     eduterm_credentials_arn = aws_secretsmanager_secret.eduterm_credentials.arn
-    surfrapportage_credentials_arn = var.monitor_uptime ? aws_secretsmanager_secret.surfrapportage_credentials[0].arn : ""
+    surfrapportage_credentials_arn = var.monitor_uptime ? aws_secretsmanager_secret.surfrapportage_credentials[0].arn : null
+    monitor_uptime = var.monitor_uptime
   }
 }
 
