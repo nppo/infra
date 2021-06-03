@@ -75,6 +75,16 @@ resource "aws_secretsmanager_secret" "surfrapportage_credentials" {
   description = "Credentials for surfrapportage"
 }
 
+resource "aws_secretsmanager_secret" "deepl_key" {
+  name = "search-portal/deepl"
+  description = "API key for deepl"
+}
+
+resource "aws_secretsmanager_secret_version" "deepl_key" {
+  secret_id     = aws_secretsmanager_secret.deepl_key.id
+  secret_string = jsonencode({ api_key = "" })
+}
+
 ##################################################
 # AWS policies that manage access rights
 ##################################################
