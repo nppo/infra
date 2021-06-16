@@ -101,6 +101,7 @@ data "template_file" "task_secrets_policy" {
     eduterm_credentials_arn = aws_secretsmanager_secret.eduterm_credentials.arn
     surfrapportage_credentials_arn = var.monitor_uptime ? aws_secretsmanager_secret.surfrapportage_credentials[0].arn : null
     monitor_uptime = var.monitor_uptime
+    deepl_key_arn = aws_secretsmanager_secret.deepl_key.arn
   }
 }
 
