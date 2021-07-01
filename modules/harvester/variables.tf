@@ -27,3 +27,9 @@ variable "monitoring_kms_key" {
   type        = string
   default     = ""
 }
+
+variable "exec_policy_arn" {
+  description = "ARN of the policy that allows entering containers"
+  type        = string
+  default     = ""
+}

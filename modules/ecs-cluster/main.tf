@@ -90,3 +90,11 @@ resource "aws_iam_policy" "surfpol-ecs" {
   description = "Policy for managing the ${var.project} ECS cluster"
   policy = data.template_file.surfpol.rendered
 }
+
+resource "aws_iam_policy" "exec-ecs" {
+  name        = "EcsExec-cluster"
+  description = "Policy to enable ECS exec"
+  policy = templatefile(
+  "${path.module}/ecs_exec.json.tpl", {}
+  )
+}

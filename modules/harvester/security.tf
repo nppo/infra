@@ -172,3 +172,8 @@ resource "aws_iam_role_policy_attachment" "harvester_content" {
   role = var.harvester_task_role_name
   policy_arn = aws_iam_policy.harvester_content_policy.arn
 }
+
+resource "aws_iam_role_policy_attachment" "ecs_exec_attachment" {
+  role = var.harvester_task_role_name
+  policy_arn = var.exec_policy_arn
+}

@@ -151,17 +151,9 @@ resource "aws_iam_role_policy_attachment" "application_cloudwatch_metrics" {
 
 # ECS Exec
 
-resource "aws_iam_policy" "ecs_exec" {
-  name        = "EcsExec"
-  description = "Policy to enable ECS exec"
-  policy = templatefile(
-    "${path.module}/ecs_exec.json.tpl", {}
-  )
-}
-
 resource "aws_iam_role_policy_attachment" "ecs_exec_attachment" {
   role = var.application_task_role_name
-  policy_arn = aws_iam_policy.ecs_exec.arn
+  policy_arn = var.exec_policy_arn
 }
 
 
