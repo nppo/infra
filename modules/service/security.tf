@@ -151,11 +151,15 @@ resource "aws_iam_role_policy_attachment" "application_cloudwatch_metrics" {
 
 # ECS Exec
 
-resource "aws_iam_role_policy_attachment" "ecs_exec_attachment" {
+resource "aws_iam_role_policy_attachment" "ecs_exec_attachment_task" {
   role = var.application_task_role_name
   policy_arn = var.exec_policy_arn
 }
 
+resource "aws_iam_role_policy_attachment" "ecs_exec_attachment_super" {
+  role = var.superuser_task_role_name
+  policy_arn = var.exec_policy_arn
+}
 
 # Scheduled tasks
 

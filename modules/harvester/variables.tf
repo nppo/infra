@@ -4,6 +4,12 @@ variable "harvester_task_role_name" {
   default     = ""
 }
 
+variable "superuser_task_role_name" {
+  description = "The name of the superuser IAM role"
+  type        = string
+  default     = ""
+}
+
 variable "subnet_ids" {
   description = "A list of subnet ids the redis queue will be made available in"
   type        = list(string)

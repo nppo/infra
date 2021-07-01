@@ -131,6 +131,7 @@ module "harvester" {
 
   vpc_id = module.vpc.vpc_id
   harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
+  superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
   exec_policy_arn = module.ecs-cluster.exec_policy_arn
   subnet_ids = module.vpc.private_subnet_ids
   harvester_content_bucket_name = "surfpol-harvester-content-${local.env}"
