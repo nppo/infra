@@ -3,6 +3,11 @@ output "policy_arn" {
   description = "The ARN of the IAM policy which allows managing this cluster"
 }
 
+output "exec_policy_arn" {
+  value = aws_iam_policy.exec-ecs.arn
+  description = "The ARN of the IAM policy which allows entering containers in a cluster"
+}
+
 output "application_task_role_arn" {
   value = aws_iam_role.application_task_role.arn
   description = "The ARN of the IAM role that is used by normal tasks"

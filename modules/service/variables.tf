@@ -45,3 +45,9 @@ variable "monitor_uptime" {
   type        = bool
   default     = false
 }
+
+variable "exec_policy_arn" {
+  description = "ARN of the policy that allows entering containers"
+  type        = string
+  default     = ""
+}
