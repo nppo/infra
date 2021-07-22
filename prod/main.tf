@@ -110,36 +110,33 @@ module "elasticsearch" {
 //  harvester_bucket_arn = module.harvester.harvester_bucket_arn
 //  monitor_uptime = true
 //}
-//
-//module "harvester" {
-//  source = "../modules/harvester"
-//
-//  vpc_id = module.vpc.vpc_id
-//  harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
-//  superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
-//  exec_policy_arn = module.ecs-cluster.exec_policy_arn
-//  subnet_ids = module.vpc.private_subnet_ids
-//  harvester_content_bucket_name = "surfpol-harvester-content-${local.env}"
-//  monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
-//}
-//
-//module "load-balancer" {
-//  source = "../modules/load-balancer"
-//
-//  project = local.project
-//  env = local.env
-//
-//  vpc_id = module.vpc.vpc_id
-//  subnet_ids = module.vpc.public_subnet_ids
-//  eduvpn_ips = local.eduvpn_ips
-//  domain_name = local.domain_name
-//  extra_domain_names = local.extra_domain_names
-//  host_redirects = local.host_redirects
-//  default_security_group_id = module.vpc.default_security_group_id
-//  service_access_security_group_id = module.service.service_access_security_group_id
-//  monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
-//}
-//
+
+module "harvester" {
+  source = "../modules/harvester"
+
+  vpc_id = module.vpc.vpc_id
+  harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
+  superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
+  exec_policy_arn = module.ecs-cluster.exec_policy_arn
+  subnet_ids = module.vpc.public_subnet_ids
+  harvester_content_bucket_name = "nppo-harvester-content-${local.env}"
+  monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
+}
+
+module "load-balancer" {
+  source = "../modules/load-balancer"
+
+  project = local.project
+  env = local.env
+
+  vpc_id = module.vpc.vpc_id
+  subnet_ids = module.vpc.public_subnet_ids
+  eduvpn_ips = local.eduvpn_ips
+  default_security_group_id = module.vpc.default_security_group_id
+  harvester_access_security_group_id = module.harvester.harvester_access_security_group_id
+  monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
+}
+
 //module "bastion" {
 //  source = "../modules/bastion"
 //

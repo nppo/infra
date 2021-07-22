@@ -49,7 +49,7 @@ resource "aws_lb" "nppo" {
 
   security_groups = [
     var.default_security_group_id,
-    var.service_access_security_group_id,
+    var.harvester_access_security_group_id,
     aws_security_group.load-balancer.id
   ]
   subnets = var.subnet_ids

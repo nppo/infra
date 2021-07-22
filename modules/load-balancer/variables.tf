@@ -34,8 +34,8 @@ variable "default_security_group_id" {
   default = ""
 }
 
-variable "service_access_security_group_id" {
-  description = "The ID of the security group to access the service"
+variable "harvester_access_security_group_id" {
+  description = "The ID of the security group to access the harvester"
   type = string
   default = ""
 }

@@ -20,7 +20,7 @@ resource "aws_sns_topic_policy" "sns_cloudwatch_policy" {
 resource "aws_cloudwatch_metric_alarm" "load_balancer_50x" {
   alarm_name                = "load-balancer-50x"
   dimensions                = {
-    "LoadBalancer" = aws_lb.surfpol.arn
+    "LoadBalancer" = aws_lb.nppo.arn
   }
   comparison_operator       = "GreaterThanThreshold"
   evaluation_periods        = "1"
@@ -38,7 +38,7 @@ resource "aws_cloudwatch_metric_alarm" "load_balancer_50x" {
 resource "aws_cloudwatch_metric_alarm" "targets_50x" {
   alarm_name                = "targets-50x"
   dimensions                = {
-    "LoadBalancer" = aws_lb.surfpol.arn
+    "LoadBalancer" = aws_lb.nppo.arn
   }
   comparison_operator       = "GreaterThanThreshold"
   evaluation_periods        = "1"
