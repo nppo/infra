@@ -40,7 +40,7 @@ resource "aws_security_group" "load-balancer" {
   tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-load-balancer"})
 }
 
-resource "aws_lb" "surfpol" {
+resource "aws_lb" "nppo" {
   name = "${var.project}-loadbalancer-${var.env}"
   load_balancer_type = "application"
   ip_address_type = "dualstack"
@@ -57,7 +57,7 @@ resource "aws_lb" "surfpol" {
   tags = merge(local.common_tags, {Name = "${var.project}-${var.env}"})
 }
 
-resource "aws_lb_target_group" "surfpol" {
+resource "aws_lb_target_group" "nppo" {
   name = "${var.project}-target-group-${var.env}"
   port = 80
   protocol = "HTTP"
@@ -68,87 +68,23 @@ resource "aws_lb_target_group" "surfpol" {
 }
 
 resource "aws_lb_listener" "http-listener" {
-  load_balancer_arn = aws_lb.surfpol.arn
+  load_balancer_arn = aws_lb.nppo.arn
   port = 80
   protocol = "HTTP"
 
   default_action {
-    type = "redirect"
-
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
-}
-
-data "aws_acm_certificate" "main" {
-  domain   = var.domain_name
-  statuses = ["ISSUED"]
-  most_recent = true
-}
-
-data "aws_acm_certificate" "extra" {
-  for_each  = toset(var.extra_domain_names)
-
-  domain    = each.key
-  statuses  = ["ISSUED"]
-  most_recent = true
-}
-
-resource "aws_lb_listener" "https-listener" {
-  load_balancer_arn = aws_lb.surfpol.arn
-  port              = "443"
-  protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
-  certificate_arn   = data.aws_acm_certificate.main.arn
-
-  default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.surfpol.arn
-  }
-}
-
-resource "aws_alb_listener_certificate" "extra" {
-  for_each        = data.aws_acm_certificate.extra
-
-  listener_arn    = aws_lb_listener.https-listener.arn
-  certificate_arn = each.value.arn
-}
-
-resource "aws_lb_listener_rule" "host_redirects" {
-  for_each     = var.host_redirects
-
-  listener_arn = aws_lb_listener.https-listener.arn
-  priority     = index(keys(var.host_redirects), each.key) + 1
-
-  action {
-    type          = "redirect"
-    redirect {
-      host        = each.value
-      path        = "/#{path}"
-      port        = "#{port}"
-      protocol    = "#{protocol}"
-      query       = "#{query}"
-      status_code = "HTTP_301"
-    }
-  }
-
-  condition {
-    host_header {
-      values = [each.key]
-    }
+    target_group_arn = aws_lb_target_group.nppo.arn
   }
 }
 
 resource "aws_lb_listener_rule" "restrict-admin-to-eduvpn" {
-  listener_arn = aws_lb_listener.https-listener.arn
-  priority = length(var.host_redirects) + 1
+  listener_arn = aws_lb_listener.http-listener.arn
+  priority = 1
 
   action {
     type = "forward"
-    target_group_arn = aws_lb_target_group.surfpol.arn
+    target_group_arn = aws_lb_target_group.nppo.arn
   }
 
   condition {
@@ -165,8 +101,8 @@ resource "aws_lb_listener_rule" "restrict-admin-to-eduvpn" {
 }
 
 resource "aws_lb_listener_rule" "block-admin" {
-  listener_arn = aws_lb_listener.https-listener.arn
-  priority = length(var.host_redirects) + 2
+  listener_arn = aws_lb_listener.http-listener.arn
+  priority = 2
 
   action {
     type = "fixed-response"

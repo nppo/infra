@@ -15,7 +15,7 @@ resource "aws_db_subnet_group" "this" {
 
 resource "aws_security_group" "access" {
   name        = "${var.project}-${var.env}-${var.db_name}-access"
-  description = "Allows access to the ${var.project}-${var.env}-${var.db_name} database"
+  description = "Allows access to the database"
   vpc_id      = var.vpc_id
 
   tags = merge(local.common_tags, {Name = "${var.project}-${var.db_name}-access"})
@@ -23,7 +23,7 @@ resource "aws_security_group" "access" {
 
 resource "aws_security_group" "db" {
   name = "${var.project}-${var.env}-${var.db_name}-db"
-  description = "Protects the ${var.project}-${var.env}-${var.db_name} database"
+  description = "Protects the database"
   vpc_id      = var.vpc_id
 
   ingress {
@@ -80,7 +80,7 @@ resource "aws_kms_alias" "db_encryption_key_alias" {
   target_key_id = aws_kms_key.db_encryption_key.key_id
 }
 
-resource "aws_db_instance" "surfpol" {
+resource "aws_db_instance" "nppo" {
   identifier               = "${var.project}-${var.db_name}"
   db_subnet_group_name     = aws_db_subnet_group.this.name
   multi_az                 = true

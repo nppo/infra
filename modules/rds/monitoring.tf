@@ -20,7 +20,7 @@ resource "aws_sns_topic_policy" "sns_cloudwatch_policy" {
 resource "aws_cloudwatch_metric_alarm" "rds_cpu" {
   alarm_name                = "rds-cpu"
   dimensions                = {
-    "DBInstanceIdentifier" = aws_db_instance.surfpol.identifier
+    "DBInstanceIdentifier" = aws_db_instance.nppo.identifier
   }
   comparison_operator       = "GreaterThanThreshold"
   evaluation_periods        = "1"
@@ -38,7 +38,7 @@ resource "aws_cloudwatch_metric_alarm" "rds_cpu" {
 resource "aws_cloudwatch_metric_alarm" "rds_memory" {
   alarm_name                = "rds-memory"
   dimensions                = {
-    "DBInstanceIdentifier" = aws_db_instance.surfpol.identifier
+    "DBInstanceIdentifier" = aws_db_instance.nppo.identifier
   }
   comparison_operator       = "LessThanThreshold"
   evaluation_periods        = "1"

@@ -12,11 +12,6 @@ resource "aws_iam_group_policy_attachment" "superuser_attach" {
   policy_arn = aws_iam_policy.superusers.arn
 }
 
-locals {
-  # pgp public key to encrypt new secrets
-  pgp = file("${path.module}/jelmer.gpg.pubkey")
-}
-
 resource "aws_iam_user" "users" {
   for_each = var.users
   name = each.key
@@ -30,7 +25,7 @@ resource "aws_iam_user_login_profile" "this" {
   for_each = aws_iam_user.users
 
   user = each.value.name
-  pgp_key = local.pgp
+  pgp_key = "keybase:fako.berkers@surf.nl"
 
   lifecycle {
     ignore_changes = [password_length, password_reset_required, pgp_key]

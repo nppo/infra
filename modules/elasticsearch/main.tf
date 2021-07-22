@@ -144,8 +144,8 @@ POLICY
 }
 
 resource "aws_iam_policy" "elasticsearch_full_access" {
-  name        = "SurfpolElasticSearchFullAccess"
-  description = "Policy for full access to surfpol elasticsearch cluster"
+  name        = "NPPOElasticSearchFullAccess"
+  description = "Policy for full access to NPPO elasticsearch cluster"
   policy = templatefile(
     "${path.module}/elasticsearch_full_access.json.tpl",
     { elasticsearch_arn: aws_elasticsearch_domain.this.arn }
@@ -158,8 +158,8 @@ resource "aws_iam_role_policy_attachment" "superuser_elastic" {
 }
 
 resource "aws_iam_policy" "elasticsearch_read_access" {
-  name        = "SurfpolElasticSearchReadAccess"
-  description = "Policy for read-access to surfpol elasticsearch cluster"
+  name        = "NPPOElasticSearchReadAccess"
+  description = "Policy for read-access to NPPO elasticsearch cluster"
   policy = templatefile(
     "${path.module}/elasticsearch_read_access.json.tpl",
     { elasticsearch_arn: aws_elasticsearch_domain.this.arn }

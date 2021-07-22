@@ -87,7 +87,7 @@ resource "aws_nat_gateway" "this" {
   depends_on = [aws_internet_gateway.this]
 }
 
-# provides a route to the internet via the internet gatway
+# provides a route to the internet via the internet gateway
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.this.id
 

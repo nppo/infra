@@ -22,7 +22,7 @@ resource "aws_security_group" "this" {
 
 resource "aws_security_group" "access" {
   name        = "${var.project}-${var.env}-elasticsearch-access"
-  description = "Allows access to the surfpol-dev ElasticSearch cluster"
+  description = "Allows access to theElasticSearch cluster"
   vpc_id      = var.vpc_id
 
   tags = merge(local.common_tags, {Domain = "${var.project}-elasticsearch-${var.domain_name}"})
