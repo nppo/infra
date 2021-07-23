@@ -57,14 +57,14 @@ resource "aws_lb" "nppo" {
   tags = merge(local.common_tags, {Name = "${var.project}-${var.env}"})
 }
 
-resource "aws_lb_target_group" "nppo" {
-  name = "${var.project}-target-group-${var.env}"
+resource "aws_lb_target_group" "harvester-target" {
+  name = "harvester-target-group"
   port = 80
   protocol = "HTTP"
   target_type = "ip"
   vpc_id = var.vpc_id
 
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.env}-target-group"})
+  tags = merge(local.common_tags, {Name = "harvester-target-group"})
 }
 
 resource "aws_lb_listener" "http-listener" {
@@ -74,7 +74,7 @@ resource "aws_lb_listener" "http-listener" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.nppo.arn
+    target_group_arn = aws_lb_target_group.harvester-target.arn
   }
 }
 
@@ -84,7 +84,7 @@ resource "aws_lb_listener_rule" "restrict-admin-to-eduvpn" {
 
   action {
     type = "forward"
-    target_group_arn = aws_lb_target_group.nppo.arn
+    target_group_arn = aws_lb_target_group.harvester-target.arn
   }
 
   condition {

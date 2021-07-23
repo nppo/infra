@@ -1,6 +1,6 @@
 resource "aws_security_group" "this" {
-  name        = "${var.project}-elasticsearch-${var.domain_name}"
-  description = "Allow inbound traffic to elasticsearch cluster from VPC"
+  name        = "elasticsearch-protect"
+  description = "Protects elasticsearch cluster and allows 443 from VPC"
   vpc_id      = var.vpc_id
 
   ingress {
@@ -17,15 +17,15 @@ resource "aws_security_group" "this" {
     ]
   }
 
-  tags = merge(local.common_tags, {Domain = "${var.project}-elasticsearch-${var.domain_name}"})
+  tags = merge(local.common_tags, {Domain = "elasticsearch-${var.domain_name}"})
 }
 
 resource "aws_security_group" "access" {
-  name        = "${var.project}-${var.env}-elasticsearch-access"
+  name        = "elasticsearch-access"
   description = "Allows access to theElasticSearch cluster"
   vpc_id      = var.vpc_id
 
-  tags = merge(local.common_tags, {Domain = "${var.project}-elasticsearch-${var.domain_name}"})
+  tags = merge(local.common_tags, {Domain = "elasticsearch-${var.domain_name}"})
 }
 
 resource "aws_security_group_rule" "outbound_to_es" {
@@ -36,4 +36,3 @@ resource "aws_security_group_rule" "outbound_to_es" {
   type                     = "egress"
   source_security_group_id = aws_security_group.this.id
 }
-

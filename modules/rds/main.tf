@@ -7,22 +7,22 @@ locals {
 }
 
 resource "aws_db_subnet_group" "this" {
-  name       = "${var.project}-${var.env}-${var.db_name}"
+  name       = "${var.env}-${var.db_name}"
   subnet_ids = var.subnet_ids
 
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.db_name}"})
+  tags = merge(local.common_tags, {Name = "${var.db_name}"})
 }
 
 resource "aws_security_group" "access" {
-  name        = "${var.project}-${var.env}-${var.db_name}-access"
+  name        = "database-access"
   description = "Allows access to the database"
   vpc_id      = var.vpc_id
 
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.db_name}-access"})
+  tags = merge(local.common_tags, {Name = "${var.db_name}-access"})
 }
 
 resource "aws_security_group" "db" {
-  name = "${var.project}-${var.env}-${var.db_name}-db"
+  name = "database-protect"
   description = "Protects the database"
   vpc_id      = var.vpc_id
 
@@ -40,7 +40,7 @@ resource "aws_security_group" "db" {
     security_groups = [aws_security_group.access.id]
   }
 
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.db_name}-db"})
+  tags = merge(local.common_tags, {Name = "${var.db_name}-protect"})
 }
 
 resource "random_password" "password" {
@@ -59,7 +59,7 @@ resource "aws_secretsmanager_secret_version" "postgres_password" {
 }
 
 resource "aws_db_parameter_group" "postgres12" {
-  name   = "${var.project}-${var.db_name}"
+  name   = "${var.db_name}"
   family = "postgres12"
 
   parameter {
@@ -67,12 +67,12 @@ resource "aws_db_parameter_group" "postgres12" {
     value = "Europe/Amsterdam"
   }
 
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.db_name}"})
+  tags = merge(local.common_tags, {Name = "${var.db_name}"})
 }
 
 resource "aws_kms_key" "db_encryption_key" {
   description = "Database encryption key"
-  tags = merge(local.common_tags, {Name="${var.project}-${var.db_name}-encryption-key"})
+  tags = merge(local.common_tags, {Name="${var.db_name}-encryption-key"})
 }
 
 resource "aws_kms_alias" "db_encryption_key_alias" {
@@ -81,7 +81,7 @@ resource "aws_kms_alias" "db_encryption_key_alias" {
 }
 
 resource "aws_db_instance" "nppo" {
-  identifier               = "${var.project}-${var.db_name}"
+  identifier               = "${var.db_name}"
   db_subnet_group_name     = aws_db_subnet_group.this.name
   multi_az                 = true
   vpc_security_group_ids   = [aws_security_group.db.id]
@@ -101,7 +101,7 @@ resource "aws_db_instance" "nppo" {
   username                 = "postgres"
   password                 = jsondecode(aws_secretsmanager_secret_version.postgres_password.secret_string)["password"]
 
-  final_snapshot_identifier = "${var.project}-${var.db_name}-final"
+  final_snapshot_identifier = "${var.db_name}-final"
   backup_retention_period  = 30
   backup_window            = "02:00-03:00"
   delete_automated_backups = true
@@ -114,5 +114,5 @@ resource "aws_db_instance" "nppo" {
 
   allow_major_version_upgrade = false
 
-  tags = merge(local.common_tags, {Name = "${var.project}-${var.db_name}"})
+  tags = merge(local.common_tags, {Name = "${var.db_name}"})
 }
