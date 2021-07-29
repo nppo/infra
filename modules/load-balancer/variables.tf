@@ -40,6 +40,12 @@ variable "harvester_access_security_group_id" {
   default = ""
 }
 
+variable "search_access_security_group_id" {
+  description = "The ID of the security group to access the search service"
+  type = string
+  default = ""
+}
+
 variable "monitoring_kms_key" {
   description = "KMS key for monitoring"
   type        = string

@@ -106,7 +106,7 @@ resource "aws_db_instance" "nppo" {
   backup_window            = "02:00-03:00"
   delete_automated_backups = true
 
-  #deletion_protection      = true
+  deletion_protection      = true
 
   maintenance_window       = "Sat:03:00-Sat:04:00"
 

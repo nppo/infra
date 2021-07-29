@@ -19,7 +19,7 @@ data "aws_ami" "ubuntu" {
     values = ["available"]
   }
 
-  owners = ["099720109477"]
+  owners = ["099720109477"]  # account of Canonical
 }
 
 data "aws_iam_policy_document" "this" {

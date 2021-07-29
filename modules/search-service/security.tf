@@ -43,16 +43,6 @@ resource "aws_secretsmanager_secret_version" "postgres_password_service" {
   })
 }
 
-resource "aws_secretsmanager_secret" "surfconext" {
-  name = "search-portal/surfconext"
-  description = "The OIDC secret key"
-}
-
-resource "aws_secretsmanager_secret_version" "surfconext" {
-  secret_id     = aws_secretsmanager_secret.surfconext.id
-  secret_string = jsonencode({ secret_key = "" })
-}
-
 resource "aws_secretsmanager_secret" "django" {
   name = "search-portal/django"
   description = "The Django SECRET_KEY setting and superuser admin password"
@@ -67,12 +57,6 @@ resource "aws_secretsmanager_secret_version" "django" {
 resource "aws_secretsmanager_secret" "eduterm_credentials" {
   name = "eduterm"
   description = "API key for the Eduterm service"
-}
-
-resource "aws_secretsmanager_secret" "surfrapportage_credentials" {
-  count = var.monitor_uptime ? 1 : 0
-  name = "surfrapportage"
-  description = "Credentials for surfrapportage"
 }
 
 resource "aws_secretsmanager_secret" "deepl_key" {
@@ -95,12 +79,8 @@ data "template_file" "task_secrets_policy" {
   template = file("${path.module}/task-secrets-policy.json.tpl")
   vars = {
     django_credentials_arn = aws_secretsmanager_secret_version.django.arn
-    surfconext_credentials_arn = aws_secretsmanager_secret.surfconext.arn
-    elastic_search_credentials_arn = aws_secretsmanager_secret.elastic_search.arn
     postgres_credentials_application_arn = aws_secretsmanager_secret_version.postgres_password_service.arn
     eduterm_credentials_arn = aws_secretsmanager_secret.eduterm_credentials.arn
-    surfrapportage_credentials_arn = var.monitor_uptime ? aws_secretsmanager_secret.surfrapportage_credentials[0].arn : null
-    monitor_uptime = var.monitor_uptime
     deepl_key_arn = aws_secretsmanager_secret.deepl_key.arn
   }
 }
@@ -114,39 +94,6 @@ resource "aws_iam_policy" "task_secrets_policy" {
 resource "aws_iam_role_policy_attachment" "application_secretsmanager" {
   role = var.application_task_role_name
   policy_arn = aws_iam_policy.task_secrets_policy.arn
-}
-
-# Image upload bucket
-
-resource "aws_iam_policy" "s3_read_write" {
-  name        = "SurfpolS3ReadWrite"
-  description = "Policy for read/write access to image upload bucket"
-  policy = templatefile(
-  "${path.module}/s3_read_write.json.tpl",
-  { bucket_arn: aws_s3_bucket.surfpol-image-uploads.arn, harvester_bucket_arn: var.harvester_bucket_arn }
-  )
-}
-
-resource "aws_iam_role_policy_attachment" "application_s3" {
-  role = var.application_task_role_name
-  policy_arn = aws_iam_policy.s3_read_write.arn
-}
-
-# Read cloudwatch metrics
-
-resource "aws_iam_policy" "read_cloudwatch_metrics" {
-  name        = "ReadCloudwatchMetrics"
-  count = var.monitor_uptime ? 1 : 0
-  description = "Policy to read cloudwatch metrics for uptime"
-  policy = templatefile(
-    "${path.module}/cloudwatch_metrics.json.tpl", {}
-  )
-}
-
-resource "aws_iam_role_policy_attachment" "application_cloudwatch_metrics" {
-  count = var.monitor_uptime ? 1 : 0
-  role = var.application_task_role_name
-  policy_arn = var.monitor_uptime ? aws_iam_policy.read_cloudwatch_metrics[0].arn : null
 }
 
 # ECS Exec

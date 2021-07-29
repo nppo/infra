@@ -34,18 +34,6 @@ variable "monitoring_kms_key" {
   default     = ""
 }
 
-variable "harvester_bucket_arn" {
-  description = "arn of harvester content bucket"
-  type        = string
-  default     = ""
-}
-
-variable "monitor_uptime" {
-  description = "Boolean to define whether uptime is sent to SURFrapportage"
-  type        = bool
-  default     = false
-}
-
 variable "exec_policy_arn" {
   description = "ARN of the policy that allows entering containers"
   type        = string

@@ -20,7 +20,7 @@ resource "aws_sns_topic_policy" "sns_cloudwatch_policy" {
 resource "aws_cloudwatch_metric_alarm" "service_cpu" {
   alarm_name                = "service-cpu"
   dimensions                = {
-    "ClusterName" = "surfpol"
+    "ClusterName" = "nppo"
     "ServiceName" = "search-portal"
   }
   comparison_operator       = "GreaterThanThreshold"
@@ -39,7 +39,7 @@ resource "aws_cloudwatch_metric_alarm" "service_cpu" {
 resource "aws_cloudwatch_metric_alarm" "service_memory" {
   alarm_name                = "service-memory"
   dimensions                = {
-    "ClusterName" = "surfpol"
+    "ClusterName" = "nppo"
     "ServiceName" = "search-portal"
   }
   comparison_operator       = "GreaterThanThreshold"
