@@ -84,13 +84,37 @@ resource "aws_lb_listener" "http-listener" {
   protocol = "HTTP"
 
   default_action {
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
+
+data "aws_acm_certificate" "main" {
+  domain   = "*.publinova.nl"
+  statuses = ["ISSUED"]
+  most_recent = true
+}
+
+resource "aws_lb_listener" "https-listener" {
+  load_balancer_arn = aws_lb.nppo.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  certificate_arn   = data.aws_acm_certificate.main.arn
+
+  default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.harvester-target.arn
   }
 }
 
 resource "aws_lb_listener_rule" "search-default" {
-  listener_arn = aws_lb_listener.http-listener.arn
+  listener_arn = aws_lb_listener.https-listener.arn
   priority = 4
 
   action {
