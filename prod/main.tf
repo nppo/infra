@@ -93,7 +93,7 @@ module "elasticsearch" {
   elasticsearch_version = "7.9"
   instance_type = "r5.xlarge.elasticsearch"
   instance_count = 1
-  instance_volume_size = 10
+  instance_volume_size = 50
   vpc_id = module.vpc.vpc_id
   subnet_id = module.vpc.private_subnet_ids[0]
   superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
