@@ -10,7 +10,13 @@ locals {
 }
 
 terraform {
-  required_version = "~> 0.12"
+  required_version = "~> 1.0.7"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.57.0"
+    }
+  }
   backend "s3" {
     key = "prod/terraform.tfstate"
     region = "eu-central-1"
@@ -20,7 +26,6 @@ terraform {
 }
 
 provider "aws" {
-  version    = "~> 3.12"
   profile    = "nppo-prod"
   region     = "eu-central-1"
 }
