@@ -108,6 +108,11 @@ resource "aws_secretsmanager_secret" "sharekit_credentials_harvester" {
   description = "Sharekit JSON API credentials"
 }
 
+resource "aws_secretsmanager_secret" "hanze_credentials_harvester" {
+  name = "harvester/hanze-credentials"
+  description = "Hanze Azure API credentials"
+}
+
 ##################################################
 # AWS policies that manage access rights
 ##################################################
