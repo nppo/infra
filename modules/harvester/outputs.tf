@@ -12,3 +12,8 @@ output "harvester_bucket_name" {
   value = aws_s3_bucket.harvester_content_bucket.id
   description = "The name of the harvester content bucket"
 }
+
+output "harvester_api_key_arn" {
+  value = aws_secretsmanager_secret_version.harvester_key_version.arn
+  description = "The ARN of the secret that holds the internal harvester API key"
+}

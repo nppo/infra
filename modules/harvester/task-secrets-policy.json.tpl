@@ -13,7 +13,10 @@
                 "${django_credentials_arn}",
                 "${postgres_credentials_application_arn}",
                 "${flower_credentials_arn}",
-                "${sharekit_credentials_arn}"
+                "${eduterm_credentials_arn}",
+                "${sharekit_credentials_arn}",
+                "${deepl_key_arn}",
+                "${harvester_api_key_arn}"
             ]
         },
         {

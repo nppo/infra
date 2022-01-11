@@ -53,22 +53,6 @@ resource "aws_secretsmanager_secret_version" "django" {
   secret_string = jsonencode({ secret_key = "", admin_password = "" })
 }
 
-# This secret is likely to get generic one day, but only needed for service for now.
-resource "aws_secretsmanager_secret" "eduterm_credentials" {
-  name = "eduterm"
-  description = "API key for the Eduterm service"
-}
-
-resource "aws_secretsmanager_secret" "deepl_key" {
-  name = "search-portal/deepl"
-  description = "API key for deepl"
-}
-
-resource "aws_secretsmanager_secret_version" "deepl_key" {
-  secret_id     = aws_secretsmanager_secret.deepl_key.id
-  secret_string = jsonencode({ api_key = "" })
-}
-
 ##################################################
 # AWS policies that manage access rights
 ##################################################
@@ -80,8 +64,7 @@ data "template_file" "task_secrets_policy" {
   vars = {
     django_credentials_arn = aws_secretsmanager_secret_version.django.arn
     postgres_credentials_application_arn = aws_secretsmanager_secret_version.postgres_password_service.arn
-    eduterm_credentials_arn = aws_secretsmanager_secret.eduterm_credentials.arn
-    deepl_key_arn = aws_secretsmanager_secret.deepl_key.arn
+    harvester_api_key_arn = var.harvester_api_key_arn
   }
 }
 

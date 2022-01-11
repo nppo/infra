@@ -12,8 +12,7 @@
             "Resource": [
                 "${django_credentials_arn}",
                 "${postgres_credentials_application_arn}",
-                "${eduterm_credentials_arn}",
-                "${deepl_key_arn}"
+                "${harvester_api_key_arn}"
             ]
         },
         {

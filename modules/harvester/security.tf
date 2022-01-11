@@ -113,6 +113,38 @@ resource "aws_secretsmanager_secret" "hanze_credentials_harvester" {
   description = "Hanze Azure API credentials"
 }
 
+resource "aws_secretsmanager_secret" "deepl_key" {
+  name = "harvester/deepl"
+  description = "API key for deepl"
+}
+
+resource "aws_secretsmanager_secret_version" "deepl_key" {
+  secret_id     = aws_secretsmanager_secret.deepl_key.id
+  secret_string = jsonencode({ api_key = "" })
+}
+
+resource "aws_secretsmanager_secret" "eduterm_credentials" {
+  name = "eduterm"
+  description = "API key for the Eduterm service"
+}
+
+resource "random_password" "random_harvester_key" {
+  length = 40
+  special = false
+}
+
+resource "aws_secretsmanager_secret" "harvester_key" {
+  name = "harvester/api-key"
+  description = "Internal API key to access the harvester"
+}
+
+resource "aws_secretsmanager_secret_version" "harvester_key_version" {
+  secret_id     = aws_secretsmanager_secret.harvester_key.id
+  secret_string = jsonencode({
+    api_key = random_password.random_harvester_password.result
+  })
+}
+
 ##################################################
 # AWS policies that manage access rights
 ##################################################
@@ -126,6 +158,9 @@ data "template_file" "harvester_task_secrets_policy" {
     postgres_credentials_application_arn = aws_secretsmanager_secret_version.postgres_password_harvester.arn
     flower_credentials_arn = aws_secretsmanager_secret_version.flower_password_harvester.arn
     sharekit_credentials_arn = aws_secretsmanager_secret.sharekit_credentials_harvester.arn
+    eduterm_credentials_arn = aws_secretsmanager_secret.eduterm_credentials.arn
+    deepl_key_arn = aws_secretsmanager_secret.deepl_key.arn
+    harvester_api_key_arn = aws_secretsmanager_secret.harvester_key.arn
   }
 }
 

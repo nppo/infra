@@ -39,3 +39,9 @@ variable "exec_policy_arn" {
   type        = string
   default     = ""
 }
+
+variable "harvester_api_key_arn" {
+  description = "The ARN of the secret that holds the internal harvester API key"
+  type        = string
+  default     = ""
+}
