@@ -127,6 +127,17 @@ module "harvester" {
   monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
 }
 
+module "middleware-service" {
+  source = "../modules/middleware-service"
+
+  env = local.env
+  vpc_id = module.vpc.vpc_id
+  application_task_role_name = module.ecs-cluster.middleware_task_role_name
+  superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
+  exec_policy_arn = module.ecs-cluster.exec_policy_arn
+  monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
+}
+
 module "load-balancer" {
   source = "../modules/load-balancer"
 
@@ -139,6 +150,7 @@ module "load-balancer" {
   default_security_group_id = module.vpc.default_security_group_id
   harvester_access_security_group_id = module.harvester.harvester_access_security_group_id
   search_access_security_group_id = module.search-service.search_access_security_group_id
+  middleware_access_security_group_id = module.middleware-service.middleware_access_security_group_id
   monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
 }
 
