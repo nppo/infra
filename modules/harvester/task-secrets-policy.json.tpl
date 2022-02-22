@@ -16,7 +16,8 @@
                 "${eduterm_credentials_arn}",
                 "${sharekit_credentials_arn}",
                 "${deepl_key_arn}",
-                "${harvester_api_key_arn}"
+                "${harvester_api_key_arn}",
+                "${hanze_credentials_harvester}"
             ]
         },
         {

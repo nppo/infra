@@ -161,6 +161,7 @@ data "template_file" "harvester_task_secrets_policy" {
     eduterm_credentials_arn = aws_secretsmanager_secret.eduterm_credentials.arn
     deepl_key_arn = aws_secretsmanager_secret.deepl_key.arn
     harvester_api_key_arn = aws_secretsmanager_secret.harvester_key.arn
+    hanze_credentials_harvester = aws_secretsmanager_secret.hanze_credentials_harvester.arn
   }
 }
 
