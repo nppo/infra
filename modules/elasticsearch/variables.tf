@@ -19,7 +19,7 @@ variable "env" {
 variable "elasticsearch_version" {
   description = "The version of ElasticSearch to deploy"
   type        = string
-  default     = "7.4"
+  default     = "OpenSearch_1.1"
 }
 
 variable "instance_type" {
