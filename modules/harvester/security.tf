@@ -145,6 +145,16 @@ resource "aws_secretsmanager_secret_version" "harvester_key_version" {
   })
 }
 
+resource "aws_secretsmanager_secret" "pure_hva_key" {
+  name = "harvester/pure-hva"
+  description = "API key for deepl"
+}
+
+resource "aws_secretsmanager_secret_version" "pure_hva_key" {
+  secret_id     = aws_secretsmanager_secret.pure_hva_key.id
+  secret_string = jsonencode({ api_key = "" })
+}
+
 ##################################################
 # AWS policies that manage access rights
 ##################################################
@@ -162,6 +172,7 @@ data "template_file" "harvester_task_secrets_policy" {
     deepl_key_arn = aws_secretsmanager_secret.deepl_key.arn
     harvester_api_key_arn = aws_secretsmanager_secret.harvester_key.arn
     hanze_credentials_harvester = aws_secretsmanager_secret.hanze_credentials_harvester.arn
+    pure_hva_key = aws_secretsmanager_secret.pure_hva_key.arn
   }
 }
 
