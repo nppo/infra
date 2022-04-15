@@ -11,7 +11,8 @@
             ],
             "Resource": [
                 "${django_credentials_arn}",
-                "${postgres_credentials_application_arn}"
+                "${postgres_credentials_application_arn}",
+                "${hva_pure_api_key_arn}"
             ]
         },
         {

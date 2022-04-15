@@ -17,3 +17,8 @@ output "harvester_api_key_arn" {
   value = aws_secretsmanager_secret_version.harvester_key_version.arn
   description = "The ARN of the secret that holds the internal harvester API key"
 }
+
+output "hva_pure_api_key_arn" {
+  value = aws_secretsmanager_secret_version.pure_hva_key.arn
+  description = "The ARN of the secret that holds the HvA Pure API key"
+}

@@ -147,7 +147,7 @@ resource "aws_secretsmanager_secret_version" "harvester_key_version" {
 
 resource "aws_secretsmanager_secret" "pure_hva_key" {
   name = "harvester/pure-hva"
-  description = "API key for deepl"
+  description = "API key for HvA"
 }
 
 resource "aws_secretsmanager_secret_version" "pure_hva_key" {

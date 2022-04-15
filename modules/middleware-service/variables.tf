@@ -33,3 +33,9 @@ variable "exec_policy_arn" {
   type        = string
   default     = ""
 }
+
+variable "hva_pure_api_key_arn" {
+  description = "The ARN of the HvA Pure API key secret"
+  type        = string
+  default     = ""
+}

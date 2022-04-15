@@ -136,6 +136,7 @@ module "middleware-service" {
   superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
   exec_policy_arn = module.ecs-cluster.exec_policy_arn
   monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
+  hva_pure_api_key_arn = module.harvester.hva_pure_api_key_arn
 }
 
 module "load-balancer" {
