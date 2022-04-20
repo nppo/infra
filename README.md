@@ -1,12 +1,9 @@
 # infra
 Terraform code for SURFedushare
 
-## How does it work?
-Terraform checks your defined infrastructure against the current infrastructure. It will apply those changes to the running infrastructure to reflect your configuration.
-
 ## Prerequisites
 Make sure you have installed terraform. Follow the instructions at [the terraform website](https://learn.hashicorp.com/terraform/getting-started/install.html).
-Make sure the terraform version is compatible with the version defined in the terraform block in the `main.tf` file of the environment you want to configure. We currently request terraform `~> 0.63`.
+Make sure the terraform version is compatible with the version defined in the terraform block in the `main.tf` file of the environment you want to configure.
 
 ### AWS
 We are running our platform on Amazon Web Services (AWS).
@@ -15,16 +12,21 @@ Make sure you have access keys for the environment you want to configure. Those 
 Something like this:
 
 ```
-[pol-dev]
+[nppo-acc]
 aws_access_key_id=xxxx
 aws_secret_access_key=xxxx
 
-[pol-acc]
+[nppo-prod]
 aws_access_key_id=xxxx
 aws_secret_access_key=xxxx
 ```
 
 ## Setting up terraform
+
+You need to create a bucket on AWS manually for Terraform to store the infrastructure state in.
+Most other resources will be managed by Terraform and should not be created manually
+(or you'll need to import them with terraform import).
+
 Before you can manage your infrastructure you have to initialize terraform. Go to the environment you want to initialize (dev, acc, prod) and run:
 
 ```
