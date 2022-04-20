@@ -135,7 +135,7 @@ resource "aws_lb_listener_rule" "search-default" {
 
   condition {
     host_header {
-      values = ["search.publinova.nl"]
+      values = ["search.${var.domain_name}"]
     }
   }
 }
@@ -151,18 +151,18 @@ resource "aws_lb_listener_rule" "middleware-default" {
 
   condition {
     host_header {
-      values = ["sources.publinova.nl"]
+      values = ["sources.${var.domain_name}"]
     }
   }
 }
 
 resource "aws_route53_zone" "publinova" {
-  name = "publinova.nl"
+  name = var.domain_name
 }
 
 resource "aws_route53_record" "harvester-ip4" {
   zone_id = aws_route53_zone.publinova.zone_id
-  name    = "harvester.publinova.nl"
+  name    = "harvester.${var.domain_name}"
   type    = "A"
 
   alias {
@@ -174,7 +174,7 @@ resource "aws_route53_record" "harvester-ip4" {
 
 resource "aws_route53_record" "harvester-ip6" {
   zone_id = aws_route53_zone.publinova.zone_id
-  name    = "harvester.publinova.nl"
+  name    = "harvester.${var.domain_name}"
   type    = "AAAA"
 
   alias {
@@ -186,7 +186,7 @@ resource "aws_route53_record" "harvester-ip6" {
 
 resource "aws_route53_record" "search-ip4" {
   zone_id = aws_route53_zone.publinova.zone_id
-  name    = "search.publinova.nl"
+  name    = "search.${var.domain_name}"
   type    = "A"
 
   alias {

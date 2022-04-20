@@ -148,6 +148,7 @@ module "load-balancer" {
   vpc_id = module.vpc.vpc_id
   subnet_ids = module.vpc.public_subnet_ids
   eduvpn_ips = local.eduvpn_ips
+  domain_name = "publinova.nl"
   default_security_group_id = module.vpc.default_security_group_id
   harvester_access_security_group_id = module.harvester.harvester_access_security_group_id
   search_access_security_group_id = module.search-service.search_access_security_group_id

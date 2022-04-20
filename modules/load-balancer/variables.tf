@@ -4,6 +4,12 @@ variable "project" {
   default     = ""
 }
 
+variable "domain_name" {
+  description = "The main domain name"
+  type        = string
+  default     = ""
+}
+
 variable "env" {
   description = "Which environment this db belongs to"
   type        = string
