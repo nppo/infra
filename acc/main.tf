@@ -139,6 +139,14 @@ module "middleware-service" {
   hva_pure_api_key_arn = module.harvester.hva_pure_api_key_arn
 }
 
+module "sources" {
+  source = "../modules/sources"
+
+  harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
+  middleware_task_role_name = module.ecs-cluster.middleware_task_role_name
+  superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
+}
+
 module "load-balancer" {
   source = "../modules/load-balancer"
 
