@@ -106,7 +106,7 @@ resource "aws_lb_listener" "http-listener" {
 }
 
 data "aws_acm_certificate" "main" {
-  domain   = "*.publinova.nl"
+  domain   = "*.${var.domain_name}"
   statuses = ["ISSUED"]
   most_recent = true
 }
