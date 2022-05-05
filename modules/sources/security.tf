@@ -42,6 +42,16 @@ resource "aws_secretsmanager_secret_version" "buas_credentials_key" {
   secret_string = jsonencode({ api_key = "" })
 }
 
+resource "aws_secretsmanager_secret" "sia_credentials" {
+  name = "credentials/sia"
+  description = "SIA API credentials"
+}
+
+resource "aws_secretsmanager_secret_version" "sia_credentials_key" {
+  secret_id     = aws_secretsmanager_secret.sia_credentials.id
+  secret_string = jsonencode({ api_key = "" })
+}
+
 ##################################################
 # AWS policies that manage access rights
 ##################################################
@@ -53,6 +63,7 @@ data "template_file" "external_credentials_policy" {
     hanze_credentials_arn = aws_secretsmanager_secret.hanze_credentials.arn
     hva_credentials_arn = aws_secretsmanager_secret.hva_credentials.arn
     buas_credentials_arn = aws_secretsmanager_secret.buas_credentials.arn
+    sia_credentials_arn = aws_secretsmanager_secret.sia_credentials.arn
   }
 }
 

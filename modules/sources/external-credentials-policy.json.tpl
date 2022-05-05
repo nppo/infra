@@ -13,7 +13,8 @@
                 "${sharekit_credentials_arn}",
                 "${hanze_credentials_arn}",
                 "${hva_credentials_arn}",
-                "${buas_credentials_arn}"
+                "${buas_credentials_arn}",
+                "${sia_credentials_arn}"
             ]
         },
         {
