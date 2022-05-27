@@ -179,3 +179,8 @@ module "bastion" {
   harvester_security_group = module.harvester.harvester_access_security_group_id
   default_security_group_id = module.vpc.default_security_group_id
 }
+
+module "deploy-pipeline" {
+  source = "../modules/deploy-pipeline"
+  repository_bucket_name = "nppo-${local.env}-repository-state"
+}
