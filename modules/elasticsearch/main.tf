@@ -6,10 +6,6 @@ locals {
   }
 }
 
-data "aws_vpc" "selected" {
-  id = var.vpc_id
-}
-
 resource "aws_iam_service_linked_role" "es" {
   aws_service_name = "es.amazonaws.com"
 }
@@ -64,12 +60,6 @@ resource "aws_elasticsearch_domain" "this" {
     instance_type = var.instance_type
     instance_count = var.instance_count
     dedicated_master_enabled = false
-    #dedicated_master_type =
-    #dedicated_master_count
-    #zone_awareness_config {
-    #  availability_zone_count
-    #}
-    #zone_awareness_enabled
   }
 
   ebs_options {
@@ -86,11 +76,6 @@ resource "aws_elasticsearch_domain" "this" {
     enabled = true
   }
 
-  vpc_options {
-    subnet_ids = [var.subnet_id]
-    security_group_ids = [aws_security_group.this.id]
-  }
-
   domain_endpoint_options {
     enforce_https = true
     tls_security_policy = "Policy-Min-TLS-1-2-2019-07"
@@ -98,6 +83,15 @@ resource "aws_elasticsearch_domain" "this" {
 
   advanced_options = {
     "rest.action.multi.allow_explicit_index" = "true"
+  }
+
+  advanced_security_options {
+    enabled = true
+    internal_user_database_enabled = true
+    master_user_options {
+      master_user_name = "supersurf"
+      master_user_password = random_password.random_opensearch_password.result
+    }
   }
 
   log_publishing_options {
@@ -136,7 +130,12 @@ resource "aws_elasticsearch_domain_policy" "main" {
         "AWS": "*"
       },
       "Action": "es:*",
-      "Resource": "${aws_elasticsearch_domain.this.arn}/*"
+      "Resource": "${aws_elasticsearch_domain.this.arn}/*",
+      "Condition": {
+        "IpAddress": {
+          "aws:SourceIp": ${jsonencode(var.allowed_ips)}
+        }
+      }
     }
   ]
 }

@@ -64,6 +64,7 @@ data "template_file" "task_secrets_policy" {
   vars = {
     django_credentials_arn = aws_secretsmanager_secret_version.django.arn
     postgres_credentials_application_arn = aws_secretsmanager_secret_version.postgres_password_service.arn
+    opensearch_credentials_arn = var.opensearch_credentials_arn
     harvester_api_key_arn = var.harvester_api_key_arn
   }
 }

@@ -39,3 +39,9 @@ variable "exec_policy_arn" {
   type        = string
   default     = ""
 }
+
+variable "opensearch_credentials_arn" {
+  description = "The ARN of the secret version containing the opensearch password for the main user"
+  type        = string
+  default     = ""
+}

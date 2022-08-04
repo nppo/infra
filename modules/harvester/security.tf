@@ -170,6 +170,7 @@ data "template_file" "harvester_task_secrets_policy" {
     sharekit_credentials_arn = aws_secretsmanager_secret.sharekit_credentials_harvester.arn
     eduterm_credentials_arn = aws_secretsmanager_secret.eduterm_credentials.arn
     deepl_key_arn = aws_secretsmanager_secret.deepl_key.arn
+    opensearch_credentials_arn = var.opensearch_credentials_arn,
     harvester_api_key_arn = aws_secretsmanager_secret.harvester_key.arn
     hanze_credentials_harvester = aws_secretsmanager_secret.hanze_credentials_harvester.arn
     pure_hva_key = aws_secretsmanager_secret.pure_hva_key.arn
