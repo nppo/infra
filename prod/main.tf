@@ -4,13 +4,14 @@ locals {
   ipv4_eduvpn_ips = ["145.90.230.0/23", "145.101.60.0/23"]
   ipv6_eduvpn_ips = ["2001:610:450:50::/60", "2001:610:3:2150::/60"]
   eduvpn_ips = concat(local.ipv4_eduvpn_ips, local.ipv6_eduvpn_ips)
+  fargate_ips = ["18.196.192.5", "18.198.108.105"]
   public_keys = {
     "fako": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC+BbIDLbS4QBfJZUyzg8FEFOGGOxt5EpIHc4NaTPjKIYsQfvRrKC6gNJR9Euoby0Jlm/T8ZXcONzylnYp62ZhY5+gp51wLhxsq9vg3wYbT2lPs2HIZ3PA99etmwneA3uffm9NrE16DDrAo2Z9qy3wup4wF9sVtT2i2quk+DMwbbVeGVjGQ7RoxeH/lo8wLW3Jx+TMMSoryDHalVNWrXZwOpZQVmTJD87E7jrzmJih+XQFNmvEkq7e/+QPs8P17w5Zv7BESPz8FZ3p6e85rLogCeIa5WqDx1oooUSLUhGNgI+xvcvCJ6LG5VUckKV+uI2mkoe6eIf3YF69HU6yWZ68YR3P9rk7QeAZom/LKQBlZt/eexCG6E9rz8cvqEBNgwTdI3LAj+NcByjktw/hpugF2PECH16cCR5nro83xHrxOeomDgL441FRHuP3SK5rdXwTL8SniN0KAe5FuXsq35eVNj0h7+F8NbHWZIEr4VxGJhehW/zkzrt6pWHeQxIZwEHk= fako@burte"
   }
 }
 
 terraform {
-  required_version = "~> 1.0.7"
+  required_version = "~> 1.2.6"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -90,12 +91,14 @@ module "elasticsearch" {
   env = local.env
 
   domain_name = "main"
-  elasticsearch_version = "OpenSearch_1.1"
+  elasticsearch_version = "OpenSearch_1.2"
   instance_type = "r5.xlarge.elasticsearch"
   instance_count = 1
   instance_volume_size = 50
   vpc_id = module.vpc.vpc_id
-  subnet_id = module.vpc.private_subnet_ids[0]
+  subnet_id = module.vpc.public_subnet_ids[0]
+  default_security_group_id = module.vpc.default_security_group_id
+  allowed_ips = concat(local.ipv4_eduvpn_ips, local.fargate_ips)
   superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
   application_task_role_name = module.ecs-cluster.application_task_role_name
   harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
@@ -113,6 +116,7 @@ module "search-service" {
   exec_policy_arn = module.ecs-cluster.exec_policy_arn
   monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
   harvester_api_key_arn = module.harvester.harvester_api_key_arn
+  opensearch_credentials_arn = module.elasticsearch.opensearch_credentials_arn
 }
 
 module "harvester" {
@@ -125,6 +129,7 @@ module "harvester" {
   subnet_ids = module.vpc.public_subnet_ids
   harvester_content_bucket_name = "nppo-harvester-content-${local.env}"
   monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
+  opensearch_credentials_arn = module.elasticsearch.opensearch_credentials_arn
 }
 
 module "middleware-service" {
