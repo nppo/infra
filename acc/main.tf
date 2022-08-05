@@ -116,6 +116,7 @@ module "search-service" {
   exec_policy_arn = module.ecs-cluster.exec_policy_arn
   monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
   harvester_api_key_arn = module.harvester.harvester_api_key_arn
+  harvester_credentials_arn = module.harvester.harvester_credentials_arn
   opensearch_credentials_arn = module.elasticsearch.opensearch_credentials_arn
 }
 

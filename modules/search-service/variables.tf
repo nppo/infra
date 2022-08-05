@@ -46,6 +46,12 @@ variable "harvester_api_key_arn" {
   default     = ""
 }
 
+variable "harvester_credentials_arn" {
+  description = "The ARN of the secret that holds the internal harvester credentials"
+  type        = string
+  default     = ""
+}
+
 variable "opensearch_credentials_arn" {
   description = "The ARN of the secret version containing the opensearch password for the main user"
   type        = string

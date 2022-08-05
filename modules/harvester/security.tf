@@ -145,6 +145,21 @@ resource "aws_secretsmanager_secret_version" "harvester_key_version" {
   })
 }
 
+resource "random_uuid" "random_harvester_webhook_secret" { }
+
+resource "aws_secretsmanager_secret" "harvester_credentials" {
+  name = "harvester/credentials"
+  description = "Internal credentials to access the harvester"
+}
+
+resource "aws_secretsmanager_secret_version" "harvester_credentials_version" {
+  secret_id     = aws_secretsmanager_secret.harvester_credentials.id
+  secret_string = jsonencode({
+    api_key = random_password.random_harvester_password.result
+    webhook_secret = random_uuid.random_harvester_webhook_secret.result
+  })
+}
+
 resource "aws_secretsmanager_secret" "pure_hva_key" {
   name = "harvester/pure-hva"
   description = "API key for HvA"
@@ -172,6 +187,7 @@ data "template_file" "harvester_task_secrets_policy" {
     deepl_key_arn = aws_secretsmanager_secret.deepl_key.arn
     opensearch_credentials_arn = var.opensearch_credentials_arn,
     harvester_api_key_arn = aws_secretsmanager_secret.harvester_key.arn
+    harvester_credentials_arn = aws_secretsmanager_secret_version.harvester_credentials_version.arn
     hanze_credentials_harvester = aws_secretsmanager_secret.hanze_credentials_harvester.arn
     pure_hva_key = aws_secretsmanager_secret.pure_hva_key.arn
   }

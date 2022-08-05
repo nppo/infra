@@ -18,6 +18,7 @@
                 "${sharekit_credentials_arn}",
                 "${deepl_key_arn}",
                 "${harvester_api_key_arn}",
+                "${harvester_credentials_arn}",
                 "${hanze_credentials_harvester}",
                 "${pure_hva_key}"
             ]

@@ -22,3 +22,8 @@ output "hva_pure_api_key_arn" {
   value = aws_secretsmanager_secret_version.pure_hva_key.arn
   description = "The ARN of the secret that holds the HvA Pure API key"
 }
+
+output "harvester_credentials_arn" {
+  value = aws_secretsmanager_secret_version.harvester_credentials_version.arn
+  description = "The ARN of the secret that holds the internal harvester credentials"
+}

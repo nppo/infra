@@ -13,7 +13,8 @@
                 "${django_credentials_arn}",
                 "${postgres_credentials_application_arn}",
                 "${opensearch_credentials_arn}",
-                "${harvester_api_key_arn}"
+                "${harvester_api_key_arn}",
+                "${harvester_credentials_arn}"
             ]
         },
         {
