@@ -72,3 +72,97 @@ resource "aws_ecs_task_definition" "command" {
   memory = 8192
   cpu = 2048
 }
+
+resource "aws_service_discovery_private_dns_namespace" "nppo" {
+  name        = "nppo"
+  description = null
+  vpc         = var.vpc_id
+}
+
+resource "aws_service_discovery_service" "harvester" {
+  name = "harvester"
+
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.nppo.id
+
+    dns_records {
+      ttl  = 300
+      type = "A"
+    }
+    routing_policy = "MULTIVALUE"
+  }
+
+  health_check_custom_config {
+    failure_threshold = 1
+  }
+}
+
+resource "aws_ecs_service" "harvester" {
+  name = "harvester"
+  cluster = aws_ecs_cluster.nppo.arn
+  task_definition = aws_ecs_task_definition.harvester.arn
+  depends_on = [aws_iam_role_policy_attachment.harvester_task_execution]
+  enable_ecs_managed_tags = true
+
+  desired_count = 2
+  enable_execute_command = true
+  force_new_deployment = true
+  wait_for_steady_state = true
+
+  capacity_provider_strategy {
+    base = 0
+    capacity_provider = "FARGATE"
+    weight = 1
+  }
+
+  load_balancer {
+    target_group_arn = var.harvester_target_group
+    container_name = "harvester-nginx"
+    container_port = 80
+  }
+
+  network_configuration {
+    subnets = var.private_subnet_ids
+    security_groups = [
+      var.default_security_group,
+      var.harvester_protect_security_group,
+      var.postgres_access_security_group,
+      var.opensearch_access_security_group,
+      var.redis_access_security_group
+    ]
+  }
+
+  service_registries {
+    registry_arn = aws_service_discovery_service.harvester.arn
+  }
+}
+
+resource "aws_ecs_service" "celery" {
+  name = "celery"
+  cluster = aws_ecs_cluster.nppo.arn
+  task_definition = aws_ecs_task_definition.celery.arn
+  depends_on = [aws_iam_role_policy_attachment.harvester_task_execution]
+  enable_ecs_managed_tags = true
+
+  desired_count = 1
+  enable_execute_command = true
+  force_new_deployment = true
+  wait_for_steady_state = true
+
+  capacity_provider_strategy {
+    base = 0
+    capacity_provider = "FARGATE"
+    weight = 1
+  }
+
+  network_configuration {
+    subnets = var.private_subnet_ids
+    security_groups = [
+      var.default_security_group,
+      var.harvester_protect_security_group,
+      var.postgres_access_security_group,
+      var.opensearch_access_security_group,
+      var.redis_access_security_group
+    ]
+  }
+}
