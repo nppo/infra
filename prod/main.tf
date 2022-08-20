@@ -1,6 +1,9 @@
 locals {
   project = "nppo"
   env = "prod"
+  application_project = "nppo"
+  application_mode = "production"
+  docker_registry = "870512711545.dkr.ecr.eu-central-1.amazonaws.com"
   ipv4_eduvpn_ips = ["145.90.230.0/23", "145.101.60.0/23"]
   ipv6_eduvpn_ips = ["2001:610:450:50::/60", "2001:610:3:2150::/60"]
   eduvpn_ips = concat(local.ipv4_eduvpn_ips, local.ipv6_eduvpn_ips)
@@ -77,13 +80,6 @@ module "rds" {
   monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
 }
 
-module "ecs-cluster" {
-  source = "../modules/ecs-cluster"
-
-  project = local.project
-  env = local.env
-}
-
 module "elasticsearch" {
   source = "../modules/elasticsearch"
 
@@ -151,6 +147,33 @@ module "sources" {
   harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
   middleware_task_role_name = module.ecs-cluster.middleware_task_role_name
   superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
+}
+
+module "ecs-cluster" {
+  source = "../modules/ecs-cluster"
+
+  project = local.project
+  env = local.env
+
+  application_project = local.application_project
+  application_mode = local.application_mode
+  docker_registry = local.docker_registry
+
+  service_target_group = module.load-balancer.search_target_group
+  harvester_target_group = module.load-balancer.harvester_target_group
+  flower_credentials_arn = module.harvester.flower_credentials_arn
+
+  vpc_id = module.vpc.vpc_id
+  public_subnet_ids = module.vpc.public_subnet_ids
+  private_subnet_ids = module.vpc.private_subnet_ids
+
+  default_security_group = module.vpc.default_security_group_id
+  postgres_access_security_group = module.rds.security_group_access_id
+  opensearch_access_security_group = module.elasticsearch.elasticsearch_access_security_group
+  redis_access_security_group = module.harvester.redis_access_security_group_id
+  harvester_access_security_group = module.harvester.harvester_access_security_group_id
+  harvester_protect_security_group = module.harvester.harvester_protect_security_group_id
+  search_protect_security_group = module.search-service.search_protect_security_group_id
 }
 
 module "load-balancer" {
