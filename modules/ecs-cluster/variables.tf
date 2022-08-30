@@ -105,3 +105,9 @@ variable "search_protect_security_group" {
   type        = string
   default     = ""
 }
+
+variable "ecs_event_role" {
+  description = "The ECS event role required for Cloud Watch event targets"
+  type        = string
+  default     = ""
+}

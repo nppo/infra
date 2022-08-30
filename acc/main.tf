@@ -166,6 +166,7 @@ module "ecs-cluster" {
   vpc_id = module.vpc.vpc_id
   public_subnet_ids = module.vpc.public_subnet_ids
   private_subnet_ids = module.vpc.private_subnet_ids
+  ecs_event_role = "arn:aws:iam::825135206789:role/ecsEventsRole"
 
   default_security_group = module.vpc.default_security_group_id
   postgres_access_security_group = module.rds.security_group_access_id

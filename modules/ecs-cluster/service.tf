@@ -75,7 +75,7 @@ resource "aws_cloudwatch_event_target" "clearlogins_scheduled_task" {
   rule = aws_cloudwatch_event_rule.clearlogins_event_rule.name
   target_id = "1"
   arn = aws_ecs_cluster.nppo.arn
-  role_arn = "arn:aws:iam::825135206789:role/ecsEventsRole"
+  role_arn = var.ecs_event_role
 
   input = jsonencode({
     containerOverrides = [
