@@ -40,8 +40,8 @@ variable "public_keys" {
   default     = {}
 }
 
-variable "database_security_group" {
-  description = "ID of the database security group"
+variable "aws_services_access_security_group_id" {
+  description = "The id of the VPC security group that allows access to AWS services"
   type        = string
   default     = ""
 }

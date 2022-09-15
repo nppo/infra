@@ -126,9 +126,7 @@ resource "aws_ecs_service" "harvester" {
     security_groups = [
       var.default_security_group,
       var.harvester_protect_security_group,
-      var.postgres_access_security_group,
-      var.opensearch_access_security_group,
-      var.redis_access_security_group
+      var.aws_services_access_security_group_id
     ]
   }
 
@@ -160,9 +158,7 @@ resource "aws_ecs_service" "celery" {
     security_groups = [
       var.default_security_group,
       var.harvester_protect_security_group,
-      var.postgres_access_security_group,
-      var.opensearch_access_security_group,
-      var.redis_access_security_group
+      var.aws_services_access_security_group_id
     ]
   }
 }

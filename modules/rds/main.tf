@@ -84,7 +84,7 @@ resource "aws_db_instance" "nppo" {
   identifier               = "${var.db_name}"
   db_subnet_group_name     = aws_db_subnet_group.this.name
   multi_az                 = true
-  vpc_security_group_ids   = [aws_security_group.db.id]
+  vpc_security_group_ids   = [var.aws_services_protect_security_group_id]
 
   allocated_storage        = 20
   max_allocated_storage    = 1000

@@ -58,8 +58,7 @@ resource "aws_ecs_service" "service" {
     security_groups = [
       var.default_security_group,
       var.search_protect_security_group,
-      var.postgres_access_security_group,
-      var.opensearch_access_security_group,
+      var.aws_services_access_security_group_id,
       var.harvester_access_security_group
     ]
   }
@@ -95,7 +94,7 @@ resource "aws_cloudwatch_event_target" "clearlogins_scheduled_task" {
       subnets = [var.private_subnet_ids[0]]
       security_groups = [
         var.default_security_group,
-        var.postgres_access_security_group
+        var.aws_services_access_security_group_id
       ]
     }
   }

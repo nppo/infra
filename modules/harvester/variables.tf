@@ -45,3 +45,9 @@ variable "opensearch_credentials_arn" {
   type        = string
   default     = ""
 }
+
+variable "aws_services_protect_security_group_id" {
+  description = "The id of the VPC security group that protects AWS services"
+  type        = string
+  default     = ""
+}

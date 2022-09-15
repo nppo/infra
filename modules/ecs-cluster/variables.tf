@@ -70,20 +70,8 @@ variable "default_security_group" {
   default     = ""
 }
 
-variable "postgres_access_security_group" {
-  description = "The security group that gives access to Postgres database"
-  type        = string
-  default     = ""
-}
-
-variable "opensearch_access_security_group" {
-  description = "The security group that gives access to Opensearch"
-  type        = string
-  default     = ""
-}
-
-variable "redis_access_security_group" {
-  description = "The security group that gives access to Redis"
+variable "aws_services_access_security_group_id" {
+  description = "The id of the VPC security group that allows access to AWS services"
   type        = string
   default     = ""
 }

@@ -77,6 +77,8 @@ module "rds" {
 
   vpc_id = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnet_ids
+  aws_services_protect_security_group_id = module.vpc.aws_services_protect_security_group_id
+
   monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
 }
 
@@ -91,10 +93,11 @@ module "elasticsearch" {
   instance_type = "r5.xlarge.elasticsearch"
   instance_count = 1
   instance_volume_size = 50
+
   vpc_id = module.vpc.vpc_id
   subnet_id = module.vpc.public_subnet_ids[0]
-  default_security_group_id = module.vpc.default_security_group_id
   allowed_ips = concat(local.ipv4_eduvpn_ips, local.fargate_ips)
+
   superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
   application_task_role_name = module.ecs-cluster.application_task_role_name
   harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
@@ -120,10 +123,13 @@ module "harvester" {
   source = "../modules/harvester"
 
   vpc_id = module.vpc.vpc_id
+  subnet_ids = module.vpc.public_subnet_ids
+  aws_services_protect_security_group_id = module.vpc.aws_services_protect_security_group_id
+
   harvester_task_role_name = module.ecs-cluster.harvester_task_role_name
   superuser_task_role_name = module.ecs-cluster.superuser_task_role_name
   exec_policy_arn = module.ecs-cluster.exec_policy_arn
-  subnet_ids = module.vpc.public_subnet_ids
+
   harvester_content_bucket_name = "nppo-harvester-content-${local.env}"
   monitoring_kms_key = aws_kms_key.monitoring_encryption_key.key_id
   opensearch_credentials_arn = module.elasticsearch.opensearch_credentials_arn
@@ -169,9 +175,7 @@ module "ecs-cluster" {
   ecs_event_role = "arn:aws:iam::825135206789:role/ecsEventsRole"
 
   default_security_group = module.vpc.default_security_group_id
-  postgres_access_security_group = module.rds.security_group_access_id
-  opensearch_access_security_group = module.elasticsearch.elasticsearch_access_security_group
-  redis_access_security_group = module.harvester.redis_access_security_group_id
+  aws_services_access_security_group_id = module.vpc.aws_services_access_security_group_id
   harvester_access_security_group = module.harvester.harvester_access_security_group_id
   harvester_protect_security_group = module.harvester.harvester_protect_security_group_id
   search_protect_security_group = module.search-service.search_protect_security_group_id
@@ -205,7 +209,7 @@ module "bastion" {
   ipv4_eduvpn_ips = local.ipv4_eduvpn_ips
   ipv6_eduvpn_ips = local.ipv6_eduvpn_ips
   public_keys = local.public_keys
-  database_security_group = module.rds.security_group_access_id
+  aws_services_access_security_group_id = module.vpc.aws_services_access_security_group_id
   harvester_security_group = module.harvester.harvester_access_security_group_id
   default_security_group_id = module.vpc.default_security_group_id
 }

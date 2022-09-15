@@ -97,7 +97,7 @@ resource "aws_instance" "bastion-host" {
   subnet_id = var.subnet_id
   vpc_security_group_ids = [
     aws_security_group.eduvpn_ssh.id,
-    var.database_security_group,
+    var.aws_services_access_security_group_id,
     var.harvester_security_group,
     var.default_security_group_id
   ]

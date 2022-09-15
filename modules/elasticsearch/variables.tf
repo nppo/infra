@@ -82,12 +82,6 @@ variable "monitoring_kms_key" {
   default     = ""
 }
 
-variable "default_security_group_id" {
-  description = "The id of the default VPC security group"
-  type        = string
-  default     = ""
-}
-
 variable "allowed_ips" {
   description = "A list of allowed source ips"
   type        = list(string)

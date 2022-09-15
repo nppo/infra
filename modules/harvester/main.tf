@@ -12,7 +12,7 @@ resource "aws_elasticache_cluster" "harvester_redis" {
   engine_version       = "5.0.6"
   port                 = 6379
   subnet_group_name    = aws_elasticache_subnet_group.harvester_redis_subnet_group.name
-  security_group_ids   = [aws_security_group.protect_redis.id]
+  security_group_ids   = [var.aws_services_protect_security_group_id]
 }
 
 resource "aws_cloudwatch_log_group" "this" {
