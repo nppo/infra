@@ -90,7 +90,7 @@ resource "aws_db_instance" "nppo" {
   max_allocated_storage    = 1000
   storage_type             = "gp2"
   engine                   = "postgres"
-  engine_version           = "12.8"
+  engine_version           = "12.11"
   instance_class           = "db.t3.small"
   name                     = var.db_name
   storage_encrypted        = true
