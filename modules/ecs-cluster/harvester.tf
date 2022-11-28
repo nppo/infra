@@ -49,7 +49,7 @@ resource "aws_ecs_task_definition" "celery" {
   network_mode = "awsvpc"
   task_role_arn = aws_iam_role.harvester_task_role.arn  # gives harvester access to AWS services
   execution_role_arn = aws_iam_role.harvester_task_role.arn  # gives Fargate access to AWS services
-  memory = 8192
+  memory = 4096
   cpu = 2048
 }
 
@@ -104,7 +104,7 @@ resource "aws_ecs_service" "harvester" {
   depends_on = [aws_iam_role_policy_attachment.harvester_task_execution]
   enable_ecs_managed_tags = true
 
-  desired_count = 2
+  desired_count = 1
   enable_execute_command = true
   force_new_deployment = true
   wait_for_steady_state = true
@@ -142,7 +142,7 @@ resource "aws_ecs_service" "celery" {
   depends_on = [aws_iam_role_policy_attachment.harvester_task_execution]
   enable_ecs_managed_tags = true
 
-  desired_count = 1
+  desired_count = 2
   enable_execute_command = true
   force_new_deployment = true
   wait_for_steady_state = true
@@ -160,5 +160,41 @@ resource "aws_ecs_service" "celery" {
       var.harvester_protect_security_group,
       var.aws_services_access_security_group_id
     ]
+  }
+}
+
+resource "aws_cloudwatch_event_rule" "harvest_event_rule" {
+  name = "harvest"
+  description = "Runs the harvest command every day"
+  schedule_expression = "cron(0 1 * * ? *)"
+}
+
+resource "aws_cloudwatch_event_target" "harvest_scheduled_task" {
+  rule = aws_cloudwatch_event_rule.harvest_event_rule.name
+  target_id = "1"
+  arn = aws_ecs_cluster.nppo.arn
+  role_arn = var.ecs_event_role
+
+  input = jsonencode({
+    containerOverrides = [
+      {
+        command = ["python", "manage.py", "run_harvest", "--report-dataset-version"]
+        name = "harvester-container"
+      }
+    ]
+  })
+
+  ecs_target {
+    launch_type = "FARGATE"
+    platform_version = "LATEST"
+    task_count = 1
+    task_definition_arn = aws_ecs_task_definition.command.arn
+    network_configuration {
+      subnets = [var.private_subnet_ids[0]]
+      security_groups = [
+        var.default_security_group,
+        var.aws_services_access_security_group_id
+      ]
+    }
   }
 }

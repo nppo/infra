@@ -45,6 +45,7 @@
             "-A",
             "harvester",
             "worker",
+            "--concurrency=3",
             "--loglevel=info",
             "-n=main-worker@%h"
         ],
