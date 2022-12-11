@@ -40,6 +40,12 @@ variable "service_target_group" {
   default     = ""
 }
 
+variable "middleware_target_group" {
+  description = "The middleware target group"
+  type        = string
+  default     = ""
+}
+
 variable "flower_credentials_arn" {
   description = "The flower credentials ARN"
   type        = string
@@ -90,6 +96,12 @@ variable "harvester_protect_security_group" {
 
 variable "search_protect_security_group" {
   description = "The security group that protects the search service"
+  type        = string
+  default     = ""
+}
+
+variable "middleware_protect_security_group" {
+  description = "The security group that protects the middleware service"
   type        = string
   default     = ""
 }

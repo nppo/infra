@@ -19,16 +19,6 @@ data "aws_iam_policy_document" "task_role_policy" {
   }
 }
 
-resource "aws_iam_role" "middleware_task_role" {
-  name = "ecsMiddlewareTaskExecutionRole"
-  assume_role_policy = data.aws_iam_policy_document.task_role_policy.json
-}
-
-resource "aws_iam_role_policy_attachment" "middleware_task_execution" {
-  role       = aws_iam_role.middleware_task_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-}
-
 resource "aws_iam_role" "superuser_task_role" {
   name = "ecsSuperuserTaskExecutionRole"
   assume_role_policy = data.aws_iam_policy_document.task_role_policy.json

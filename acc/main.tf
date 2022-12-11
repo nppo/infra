@@ -167,6 +167,7 @@ module "ecs-cluster" {
 
   service_target_group = module.load-balancer.search_target_group
   harvester_target_group = module.load-balancer.harvester_target_group
+  middleware_target_group = module.load-balancer.middleware_target_group
   flower_credentials_arn = module.harvester.flower_credentials_arn
 
   vpc_id = module.vpc.vpc_id
@@ -179,6 +180,7 @@ module "ecs-cluster" {
   harvester_access_security_group = module.harvester.harvester_access_security_group_id
   harvester_protect_security_group = module.harvester.harvester_protect_security_group_id
   search_protect_security_group = module.search-service.search_protect_security_group_id
+  middleware_protect_security_group = module.middleware-service.middleware_protect_security_group_id
 }
 
 module "load-balancer" {
