@@ -4,8 +4,8 @@ locals {
   application_project = "nppo"
   application_mode = "production"
   docker_registry = "870512711545.dkr.ecr.eu-central-1.amazonaws.com"
-  ipv4_eduvpn_ips = ["145.90.230.0/23", "145.101.60.0/23"]
-  ipv6_eduvpn_ips = ["2001:610:450:50::/60", "2001:610:3:2150::/60"]
+  ipv4_eduvpn_ips = ["145.90.232.0/23"]
+  ipv6_eduvpn_ips = ["2001:610:450:b0::/64"]
   eduvpn_ips = concat(local.ipv4_eduvpn_ips, local.ipv6_eduvpn_ips)
   fargate_ips = ["18.196.192.5", "18.198.108.105"]
   public_keys = {
