@@ -38,14 +38,14 @@
         }
     },
     {
-        "name": "analyzer",
-        "image": "${docker_registry}/analyzer:latest",
+        "name": "harvester-tika",
+        "image": "${docker_registry}/harvester-tika:latest",
         "essential": true,
         "portMappings": [
             {
-                "hostPort": 9090,
+                "hostPort": 9998,
                 "protocol": "tcp",
-                "containerPort": 9090
+                "containerPort": 9998
             }
         ],
         "logConfiguration": {
