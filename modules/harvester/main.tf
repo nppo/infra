@@ -44,6 +44,15 @@ resource "aws_s3_bucket_policy" "harvester_content_bucket_policy" {
   "Version": "2012-10-17",
   "Statement": [
     {
+        "Effect": "Allow",
+        "Principal": "*",
+        "Action": "s3:GetObject",
+        "Resource": [
+            "${aws_s3_bucket.harvester_content_bucket.arn}/thumbnails/*",
+            "${aws_s3_bucket.harvester_content_bucket.arn}/core/previews/*"
+        ]
+    },
+    {
       "Effect": "Deny",
       "Principal": "*",
       "Action": "*",
